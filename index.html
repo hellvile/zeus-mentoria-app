@@ -1,0 +1,531 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeus Mentoria APP - Escola de Heróis</title>
+    <!-- Carregando Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Configuração de cores personalizadas do Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        zeus: {
+                            dark: '#0B132B',    /* Navy Blue Fundo */
+                            card: '#111C3D',    /* Navy Blue Cards */
+                            gold: '#D4AF37',    /* Gold principal */
+                            goldHover: '#F5D061'/* Gold claro para hover */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B132B;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Checkbox Customizado Dourado */
+        .zeus-checkbox {
+            appearance: none;
+            background-color: transparent;
+            margin: 0;
+            font: inherit;
+            color: #D4AF37;
+            width: 1.5em;
+            height: 1.5em;
+            border: 2px solid #4A5568;
+            border-radius: 0.25em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .zeus-checkbox::before {
+            content: "";
+            width: 0.8em;
+            height: 0.8em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #0B132B;
+            background-color: #0B132B;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .zeus-checkbox:checked {
+            background-color: #D4AF37;
+            border-color: #D4AF37;
+        }
+
+        .zeus-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        /* Efeito de Flip do Flashcard */
+        .flashcard-container {
+            perspective: 1000px;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            min-height: 250px;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(145deg, #111C3D, #0B132B);
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(145deg, #D4AF37, #B8962E);
+            color: #0B132B;
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Tela de Login -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-zeus-dark flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="bg-zeus-card border border-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+            <div class="mb-8">
+                <!-- Logotipo Simulado -->
+                <div class="w-16 h-20 mx-auto mb-4 relative">
+                    <div class="absolute inset-0 bg-zeus-card border-2 border-zeus-gold clip-shield rounded-sm"></div>
+                    <svg class="w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-zeus-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-extrabold tracking-widest text-white uppercase">ZEUS</h1>
+                <h2 class="text-sm font-semibold tracking-widest text-zeus-gold mt-1 uppercase">Mentoria</h2>
+                <p class="text-xs text-gray-400 mt-2 font-light">Escola de Heróis</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <input type="email" id="email" placeholder="Seu E-mail" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
+                </div>
+                <div>
+                    <input type="password" id="password" placeholder="Sua Senha" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
+                </div>
+                <button type="submit" class="w-full bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold text-lg py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all transform hover:scale-105 active:scale-95">
+                    Entrar no Olimpo
+                </button>
+            </form>
+            <div id="login-status" class="mt-4 text-sm text-gray-400 hidden">Autenticando...</div>
+        </div>
+    </div>
+
+    <!-- App Principal (Dashboard) -->
+    <div id="app-screen" class="hidden flex-col min-h-screen">
+        
+        <!-- Header -->
+        <header class="bg-zeus-card border-b border-gray-800 sticky top-0 z-10 shadow-md">
+            <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8 text-zeus-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-wider text-white">ZEUS</h1>
+                        <p class="text-[10px] text-zeus-gold tracking-widest uppercase">Escola de Heróis</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-medium bg-gray-800 px-3 py-1 rounded-full text-gray-300 border border-gray-700">Trilha: PMMG (Pré-Edital)</span>
+                    <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
+            
+            <div class="mb-8 flex justify-between items-end">
+                <div>
+                    <h2 class="text-4xl font-extrabold text-white mb-2">Dia <span id="display-day" class="text-zeus-gold">1</span></h2>
+                    <p class="text-gray-400 text-sm">Cumpra suas missões diárias para avançar.</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs text-gray-500 mb-1">Progresso da Trilha</div>
+                    <div class="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-zeus-gold h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                
+                <!-- Painel Esquerdo: Missões do Dia -->
+                <div class="flex flex-col gap-6">
+                    <div class="bg-zeus-card rounded-2xl p-6 border border-gray-800 shadow-lg">
+                        <h3 class="text-lg font-bold text-gray-300 mb-6 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-zeus-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Missões Diárias
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Tarefa 1 -->
+                            <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
+                                <input type="checkbox" id="task-theory" class="zeus-checkbox mt-1">
+                                <div>
+                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Teoria</span>
+                                    <span id="text-theory" class="text-white">Carregando...</span>
+                                </div>
+                            </label>
+
+                            <!-- Tarefa 2 -->
+                            <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
+                                <input type="checkbox" id="task-questions" class="zeus-checkbox mt-1">
+                                <div>
+                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Exercícios</span>
+                                    <span id="text-questions" class="text-white">Carregando...</span>
+                                </div>
+                            </label>
+
+                            <!-- Tarefa 3 -->
+                            <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
+                                <input type="checkbox" id="task-review" class="zeus-checkbox mt-1">
+                                <div>
+                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Revisão (Oráculo)</span>
+                                    <span class="text-white">Girar e revisar os flashcards programados para o dia.</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Botão de Avançar -->
+                        <div class="mt-8">
+                            <button id="advance-btn" disabled class="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 
+                                disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none
+                                bg-zeus-gold text-zeus-dark hover:bg-zeus-goldHover hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transform active:scale-95">
+                                Finalizar Dia e Avançar
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                            </button>
+                            <p id="advance-hint" class="text-center text-xs text-gray-500 mt-3">Complete todas as missões para liberar o avanço.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel Direito: Arena Flashcards -->
+                <div class="flex flex-col gap-6">
+                    <div class="bg-zeus-card rounded-2xl p-6 border border-gray-800 shadow-lg flex flex-col h-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-300 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-zeus-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                Arena de Batalha (Flashcards)
+                            </h3>
+                            <span class="text-xs bg-gray-800 text-zeus-gold px-2 py-1 rounded">Clique para virar</span>
+                        </div>
+                        
+                        <div class="flex-grow flex items-center justify-center">
+                            <div class="flashcard-container w-full h-full">
+                                <div id="flashcard" class="flashcard">
+                                    <div class="flashcard-front">
+                                        <p class="text-sm text-gray-400 mb-4 uppercase tracking-widest">Pergunta</p>
+                                        <p id="flashcard-q" class="text-xl md:text-2xl font-semibold text-white leading-relaxed">Carregando...</p>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <p class="text-sm text-zeus-dark opacity-70 mb-4 uppercase tracking-widest font-bold">Resposta</p>
+                                        <p id="flashcard-a" class="text-xl md:text-2xl font-bold leading-relaxed">Carregando...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-center gap-4">
+                            <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Anterior</button>
+                            <span class="px-4 py-2 text-sm font-bold text-zeus-gold">1 / 1</span>
+                            <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Próximo</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Importações Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuração do ambiente (usando variáveis injetadas ou fallback)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeus-mentoria-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            // Em ambiente real, o __firebase_config é fornecido. 
+            // Para execução independente, precisaria de uma config real.
+        };
+        
+        let app, db, auth, currentUserId;
+
+        // Tentar inicializar Firebase se a config existir
+        try {
+            if(Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            } else {
+                console.warn("Firebase config não encontrada. Rodando em modo Local (Apenas Memória/UI).");
+            }
+        } catch (e) {
+            console.error("Erro ao inicializar Firebase:", e);
+        }
+
+        // --- BANCO DE DADOS DA TRILHA (Cronograma) ---
+        const trailData = [
+            {
+                day: 1,
+                theory: "Português: Compreensão e interpretação de textos",
+                questions: "Resolver 20 questões de Interpretação Textual no banco.",
+                flashcardQ: "Quais são os fundamentos da República segundo o Art. 1º da CF/88?",
+                flashcardA: "SO-CI-DI-VA-PLU\n(Soberania, Cidadania, Dignidade, Valores sociais, Pluralismo político)"
+            },
+            {
+                day: 2,
+                theory: "Matemática: Conjuntos numéricos e Operações",
+                questions: "Resolver 20 questões de Conjuntos Numéricos.",
+                flashcardQ: "Quais são os objetivos fundamentais da República (Art. 3º)?",
+                flashcardA: "CON-GA-ER-PRO\n(Construir sociedade livre, Garantir desenvolvimento, Erradicar pobreza, Promover o bem de todos)"
+            },
+            {
+                day: 3,
+                theory: "Direito Constitucional: Princípios Fundamentais (Art 1 ao 4)",
+                questions: "Resolver 20 questões de Princípios Fundamentais.",
+                flashcardQ: "Quais são os princípios nas relações internacionais (Art. 4º)?",
+                flashcardA: "IN-DE-SO-NÃO-I-DE-RE-CO-CO-CO\n(Independência, Defesa da paz, Solução pacífica, Não-intervenção, Igualdade...)"
+            },
+            {
+                day: 4,
+                theory: "Direito Constitucional: Direitos Individuais e Coletivos (Art. 5º)",
+                questions: "Resolver 20 questões do Art. 5º da CF/88.",
+                flashcardQ: "A lei penal retroagirá?",
+                flashcardA: "A lei penal não retroagirá, SALVO para beneficiar o réu. (Art. 5º, XL)"
+            }
+        ];
+
+        // Variável de estado local
+        let currentDayState = 1;
+
+        // Elementos UI
+        const loginScreen = document.getElementById('login-screen');
+        const loginForm = document.getElementById('login-form');
+        const loginStatus = document.getElementById('login-status');
+        const appScreen = document.getElementById('app-screen');
+        const btnLogout = document.getElementById('logout-btn');
+        
+        const displayDay = document.getElementById('display-day');
+        const textTheory = document.getElementById('text-theory');
+        const textQuestions = document.getElementById('text-questions');
+        const flashcardQ = document.getElementById('flashcard-q');
+        const flashcardA = document.getElementById('flashcard-a');
+        const flashcard = document.getElementById('flashcard');
+        const progressBar = document.getElementById('progressBar');
+        
+        const chkTheory = document.getElementById('task-theory');
+        const chkQuestions = document.getElementById('task-questions');
+        const chkReview = document.getElementById('task-review');
+        const btnAdvance = document.getElementById('advance-btn');
+        const hintAdvance = document.getElementById('advance-hint');
+
+        // --- LÓGICA DA INTERFACE ---
+
+        // Função para atualizar a tela com os dados do dia atual
+        function renderDay(dayNum) {
+            // Garante que não passe do limite (ex: reinicia no fim para demonstração)
+            const index = (dayNum - 1) % trailData.length; 
+            const data = trailData[index];
+
+            displayDay.innerText = dayNum;
+            textTheory.innerText = data.theory;
+            textQuestions.innerText = data.questions;
+            
+            // Formatando quebra de linha do flashcard de forma segura
+            flashcardQ.innerHTML = data.flashcardQ.replace(/\n/g, '<br>');
+            flashcardA.innerHTML = data.flashcardA.replace(/\n/g, '<br>');
+
+            // Reseta checkboxes
+            chkTheory.checked = false;
+            chkQuestions.checked = false;
+            chkReview.checked = false;
+            
+            // Reseta botão
+            checkProgression();
+
+            // Garante que o flashcard volte para a frente
+            flashcard.classList.remove('flipped');
+        }
+
+        // Função para verificar se todas as missões foram cumpridas
+        function checkProgression() {
+            const allChecked = chkTheory.checked && chkQuestions.checked && chkReview.checked;
+            if (allChecked) {
+                btnAdvance.disabled = false;
+                hintAdvance.innerText = "Excelente! Você está pronto para avançar.";
+                hintAdvance.classList.remove('text-gray-500');
+                hintAdvance.classList.add('text-zeus-gold');
+            } else {
+                btnAdvance.disabled = true;
+                hintAdvance.innerText = "Complete todas as missões para liberar o avanço.";
+                hintAdvance.classList.remove('text-zeus-gold');
+                hintAdvance.classList.add('text-gray-500');
+            }
+        }
+
+        // Eventos dos Checkboxes
+        chkTheory.addEventListener('change', checkProgression);
+        chkQuestions.addEventListener('change', checkProgression);
+        chkReview.addEventListener('change', checkProgression);
+
+        // Evento do Flashcard (Girar)
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+
+        // Evento de Avançar Dia
+        btnAdvance.addEventListener('click', async () => {
+            if (btnAdvance.disabled) return;
+            
+            // Avança o dia
+            currentDayState++;
+            
+            // Atualiza Firestore se estiver autenticado
+            if (auth && currentUserId && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'progress', 'tracker');
+                    await setDoc(docRef, { currentDay: currentDayState }, { merge: true });
+                } catch (e) {
+                    console.error("Erro ao salvar progresso:", e);
+                }
+            }
+            
+            // Re-renderiza
+            renderDay(currentDayState);
+        });
+
+        // --- LÓGICA DE AUTENTICAÇÃO E INICIALIZAÇÃO ---
+
+        async function initUserData(uid) {
+            currentUserId = uid;
+            
+            if (db) {
+                // Tenta buscar o dia salvo no Firestore
+                // REGRA: /artifacts/{appId}/users/{userId}/{collectionName}
+                const docRef = doc(db, 'artifacts', appId, 'users', uid, 'progress', 'tracker');
+                
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists() && docSnap.data().currentDay) {
+                        currentDayState = docSnap.data().currentDay;
+                    } else {
+                        // Primeiro login, cria documento
+                        await setDoc(docRef, { currentDay: 1 });
+                        currentDayState = 1;
+                    }
+                } catch (e) {
+                    console.error("Erro ao acessar banco de dados, usando dia 1. Erro:", e);
+                    currentDayState = 1;
+                }
+            }
+
+            // Esconde login e mostra App
+            loginScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            renderDay(currentDayState);
+        }
+
+        // Listener de Autenticação Real do Firebase (Se configurado)
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    initUserData(user.uid);
+                } else {
+                    // Usuário deslogado, mostra tela de login
+                    loginScreen.classList.remove('hidden');
+                    appScreen.classList.add('hidden');
+                    loginStatus.classList.add('hidden');
+                }
+            });
+        }
+
+        // Submissão do Formulário de Login Simulada/Real
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (auth) {
+                loginStatus.classList.remove('hidden');
+                loginStatus.innerText = "Autenticando Herói...";
+                
+                // Segue a regra rigorosa: Tentar Custom Token, senão Anônimo
+                try {
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    // onAuthStateChanged cuidará do redirecionamento
+                } catch (error) {
+                    console.error("Falha na autenticação:", error);
+                    loginStatus.innerText = "Erro ao conectar. O Olimpo está indisponível.";
+                }
+            } else {
+                // Modo sem Firebase (Apenas UI para demonstração)
+                loginScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
+                renderDay(1);
+            }
+        });
+
+        // Logout
+        btnLogout.addEventListener('click', async () => {
+            if (auth) {
+                await signOut(auth);
+            } else {
+                // Modo sem Firebase
+                appScreen.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+                loginForm.reset();
+            }
+        });
+
+    </script>
+</body>
+</html>
