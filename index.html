@@ -7,7 +7,7 @@
     <!-- Carregando Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <!-- Configuração de cores personalizadas do Tailwind -->
     <script>
         tailwind.config = {
@@ -287,7 +287,34 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// Função para carregar os CSVs da nuvem automaticamente
+async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
+    try {
+        const resposta = await fetch(nomeDoFicheiro);
+        const textoCSV = await resposta.text();
+        
+        Papa.parse(textoCSV, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(resultados) {
+                const flashcardsCarregados = resultados.data;
+                console.log("Flashcards carregados com sucesso:", flashcardsCarregados);
+                
+                // AQUI CONECTAMOS COM A LÓGICA DO SEU APP
+                // Se a sua variável de flashcards se chamar "flashcards", faríamos:
+                // flashcards = flashcardsCarregados;
+                // renderizarFlashcardAtual(); 
+            }
+        });
+    } catch (erro) {
+        console.error("Erro ao carregar o CSV:", erro);
+    }
+}
 
+// Inicia o carregamento assim que a página abre
+window.addEventListener('load', () => {
+    carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
+});
         // Configuração do ambiente (usando variáveis injetadas ou fallback)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeus-mentoria-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
