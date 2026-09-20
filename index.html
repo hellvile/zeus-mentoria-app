@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeus Mentoria APP - Escola de Heróis</title>
-    <!-- Carregando Tailwind CSS e PapaParse (leitor de CSV) -->
+    <!-- Carregando Tailwind CSS e PapaParse -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <!-- Configuração de cores personalizadas do Tailwind -->
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
                     colors: {
                         zeus: {
-                            dark: '#0B132B',    /* Navy Blue Fundo */
-                            card: '#111C3D',    /* Navy Blue Cards */
-                            gold: '#D4AF37',    /* Gold principal */
-                            goldHover: '#F5D061'/* Gold claro para hover */
+                            dark: '#0B132B',
+                            card: '#111C3D',
+                            gold: '#D4AF37',
+                            goldHover: '#F5D061'
                         }
                     }
                 }
@@ -36,7 +34,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Checkbox Customizado Dourado */
+        /* Checkbox Customizado */
         .zeus-checkbox {
             appearance: none;
             background-color: transparent;
@@ -52,7 +50,6 @@
             cursor: pointer;
             transition: all 0.2s ease-in-out;
         }
-
         .zeus-checkbox::before {
             content: "";
             width: 0.8em;
@@ -64,21 +61,16 @@
             transform-origin: center;
             clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
         }
-
         .zeus-checkbox:checked {
             background-color: #D4AF37;
             border-color: #D4AF37;
         }
-
         .zeus-checkbox:checked::before {
             transform: scale(1);
         }
 
         /* Efeito de Flip do Flashcard */
-        .flashcard-container {
-            perspective: 1000px;
-        }
-        
+        .flashcard-container { perspective: 1000px; }
         .flashcard {
             position: relative;
             width: 100%;
@@ -89,11 +81,7 @@
             cursor: pointer;
             min-height: 250px;
         }
-        
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-        
+        .flashcard.flipped { transform: rotateY(180deg); }
         .flashcard-front, .flashcard-back {
             position: absolute;
             width: 100%;
@@ -109,11 +97,7 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
-        
-        .flashcard-front {
-            background: linear-gradient(145deg, #111C3D, #0B132B);
-        }
-        
+        .flashcard-front { background: linear-gradient(145deg, #111C3D, #0B132B); }
         .flashcard-back {
             background: linear-gradient(145deg, #D4AF37, #B8962E);
             color: #0B132B;
@@ -127,7 +111,6 @@
     <div id="login-screen" class="fixed inset-0 z-50 bg-zeus-dark flex items-center justify-center p-4 transition-opacity duration-500">
         <div class="bg-zeus-card border border-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
             <div class="mb-8">
-                <!-- Logotipo Simulado -->
                 <div class="w-16 h-20 mx-auto mb-4 relative">
                     <div class="absolute inset-0 bg-zeus-card border-2 border-zeus-gold clip-shield rounded-sm"></div>
                     <svg class="w-10 h-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-zeus-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -150,14 +133,12 @@
                     Entrar no Olimpo
                 </button>
             </form>
-            <div id="login-status" class="mt-4 text-sm text-gray-400 hidden">Autenticando...</div>
         </div>
     </div>
 
-    <!-- App Principal (Dashboard) -->
+    <!-- App Principal -->
     <div id="app-screen" class="hidden flex-col min-h-screen">
         
-        <!-- Header -->
         <header class="bg-zeus-card border-b border-gray-800 sticky top-0 z-10 shadow-md">
             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -170,31 +151,23 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="text-xs font-medium bg-gray-800 px-3 py-1 rounded-full text-gray-300 border border-gray-700">Trilha: PMMG (Pré-Edital)</span>
+                    <span class="text-xs font-medium bg-gray-800 px-3 py-1 rounded-full text-gray-300 border border-gray-700">Trilha: PMMG</span>
                     <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Sair</button>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
-            
             <div class="mb-8 flex justify-between items-end">
                 <div>
                     <h2 class="text-4xl font-extrabold text-white mb-2">Dia <span id="display-day" class="text-zeus-gold">1</span></h2>
                     <p class="text-gray-400 text-sm">Cumpra suas missões diárias para avançar.</p>
                 </div>
-                <div class="text-right">
-                    <div class="text-xs text-gray-500 mb-1">Progresso da Trilha</div>
-                    <div class="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="progress-bar" class="bg-zeus-gold h-full w-0 transition-all duration-500"></div>
-                    </div>
-                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 
-                <!-- Painel Esquerdo: Missões do Dia -->
+                <!-- Painel Esquerdo: Missões -->
                 <div class="flex flex-col gap-6">
                     <div class="bg-zeus-card rounded-2xl p-6 border border-gray-800 shadow-lg">
                         <h3 class="text-lg font-bold text-gray-300 mb-6 flex items-center gap-2">
@@ -212,45 +185,46 @@
                                 </div>
                             </label>
 
-                            <!-- Tarefa 2 -->
-                            <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
-                                <input type="checkbox" id="task-questions" class="zeus-checkbox mt-1">
-                                <div>
-                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Exercícios</span>
-                                    <span id="text-questions" class="text-white">Carregando...</span>
-                                </div>
-                            </label>
+                            <!-- Tarefa 2: Questões com Botão -->
+                            <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors group">
+                                <label class="flex items-start gap-4 cursor-pointer flex-grow">
+                                    <input type="checkbox" id="task-questions" class="zeus-checkbox mt-1">
+                                    <div>
+                                        <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Exercícios</span>
+                                        <span id="text-questions" class="text-white">Resolver questões do dia.</span>
+                                    </div>
+                                </label>
+                                <button id="open-quiz-btn" class="ml-4 px-4 py-2 bg-gray-800 hover:bg-zeus-gold hover:text-zeus-dark text-zeus-gold text-xs font-bold rounded uppercase transition-colors whitespace-nowrap">
+                                    Resolver
+                                </button>
+                            </div>
 
                             <!-- Tarefa 3 -->
                             <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
                                 <input type="checkbox" id="task-review" class="zeus-checkbox mt-1">
                                 <div>
                                     <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Revisão (Oráculo)</span>
-                                    <span class="text-white">Girar e revisar os flashcards programados para o dia.</span>
+                                    <span class="text-white">Girar e revisar os flashcards ao lado.</span>
                                 </div>
                             </label>
                         </div>
 
                         <!-- Botão de Avançar -->
                         <div class="mt-8">
-                            <button id="advance-btn" disabled class="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 
-                                disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none
-                                bg-zeus-gold text-zeus-dark hover:bg-zeus-goldHover hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transform active:scale-95">
+                            <button id="advance-btn" disabled class="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed bg-zeus-gold text-zeus-dark hover:bg-zeus-goldHover">
                                 Finalizar Dia e Avançar
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
                             </button>
-                            <p id="advance-hint" class="text-center text-xs text-gray-500 mt-3">Complete todas as missões para liberar o avanço.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Painel Direito: Arena Flashcards -->
+                <!-- Painel Direito: Flashcards -->
                 <div class="flex flex-col gap-6">
                     <div class="bg-zeus-card rounded-2xl p-6 border border-gray-800 shadow-lg flex flex-col h-full">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-lg font-bold text-gray-300 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-zeus-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                Arena de Batalha (Flashcards)
+                                Arena (Flashcards)
                             </h3>
                             <span class="text-xs bg-gray-800 text-zeus-gold px-2 py-1 rounded">Clique para virar</span>
                         </div>
@@ -282,28 +256,68 @@
         </main>
     </div>
 
-    <!-- Script Principal -->
+    <!-- Modal de Exercícios (Campo de Tiro) -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 bg-zeus-dark/95 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-zeus-card border border-zeus-gold/30 rounded-2xl shadow-2xl p-6 w-full max-w-2xl flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6 text-zeus-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Campo de Tiro (Simulado)
+                </h3>
+                <button id="close-quiz-btn" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto flex-grow pr-2">
+                <div class="mb-2 text-sm text-zeus-gold font-bold tracking-widest uppercase">Questão <span id="quiz-counter">1/1</span></div>
+                <p id="quiz-question" class="text-lg text-white mb-6 leading-relaxed">Carregando pergunta...</p>
+
+                <div class="space-y-3" id="quiz-options">
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-colors text-gray-300 flex gap-3 group" data-alt="A">
+                        <span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">A</span> <span id="quiz-opt-a">...</span>
+                    </button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-colors text-gray-300 flex gap-3 group" data-alt="B">
+                        <span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">B</span> <span id="quiz-opt-b">...</span>
+                    </button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-colors text-gray-300 flex gap-3 group" data-alt="C">
+                        <span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">C</span> <span id="quiz-opt-c">...</span>
+                    </button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-colors text-gray-300 flex gap-3 group" data-alt="D">
+                        <span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">D</span> <span id="quiz-opt-d">...</span>
+                    </button>
+                </div>
+
+                <div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden">
+                    <p class="font-bold text-sm uppercase mb-1" id="quiz-feedback-title">Comentário</p>
+                    <p class="text-gray-200 text-sm leading-relaxed" id="quiz-feedback-text">...</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-800 text-right">
+                <button id="btn-quiz-next" class="hidden px-6 py-3 bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold rounded-lg transition-all">Próxima Questão</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- BANCO DE DADOS DA TRILHA (Cronograma) ---
         const trailData = [
             {
                 day: 1,
-                theory: "Português: Compreensão e interpretação de textos",
-                questions: "Resolver 20 questões de Interpretação Textual no banco.",
+                theory: "Constitucional: Princípios Fundamentais (Art 1º ao 4º)",
+                questions: "Resolver questões de Princípios Fundamentais.",
             },
             {
                 day: 2,
-                theory: "Matemática: Conjuntos numéricos e Operações",
-                questions: "Resolver 20 questões de Conjuntos Numéricos.",
+                theory: "Português: Compreensão e interpretação de textos",
+                questions: "Resolver questões de Interpretação Textual no banco.",
             }
         ];
 
-        // Variáveis de estado local
         let currentDayState = 1;
         let flashcardsAtuais = [];
         let indiceFlashcardAtual = 0;
 
-        // Elementos UI Globais
         const loginScreen = document.getElementById('login-screen');
         const loginForm = document.getElementById('login-form');
         const appScreen = document.getElementById('app-screen');
@@ -315,9 +329,7 @@
         const chkQuestions = document.getElementById('task-questions');
         const chkReview = document.getElementById('task-review');
         const btnAdvance = document.getElementById('advance-btn');
-        const hintAdvance = document.getElementById('advance-hint');
         
-        // Elementos UI Flashcard
         const flashcardQ = document.getElementById('flashcard-q');
         const flashcardA = document.getElementById('flashcard-a');
         const flashcard = document.getElementById('flashcard');
@@ -325,70 +337,153 @@
         const btnFlashcardProximo = document.getElementById('btn-flash-next');
         const contadorFlashcard = document.getElementById('flash-counter');
 
-        // --- LÓGICA DOS FLASHCARDS (CSV) ---
+        // --- LÓGICA DOS FLASHCARDS ---
         async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
             try {
-                // Adicionamos um número aleatório ao final para enganar o cache do navegador
                 const resposta = await fetch(nomeDoFicheiro + '?v=' + new Date().getTime());
                 const textoCSV = await resposta.text();
-                
                 Papa.parse(textoCSV, {
-                    header: true,
-                    skipEmptyLines: true,
+                    header: true, skipEmptyLines: true,
                     complete: function(resultados) {
                         flashcardsAtuais = resultados.data;
                         indiceFlashcardAtual = 0;
                         renderizarFlashcardNuvem();
                     }
                 });
-            } catch (erro) {
-                console.error("Erro ao carregar o CSV:", erro);
-                flashcardQ.innerHTML = "Erro ao carregar flashcards.";
-                flashcardA.innerHTML = "Verifique se o ficheiro CSV está no GitHub.";
-            }
+            } catch (erro) { console.error("Erro flashcards."); }
         }
 
         function renderizarFlashcardNuvem() {
             if (flashcardsAtuais.length > 0 && flashcardsAtuais[indiceFlashcardAtual]) {
                 const cartaAtual = flashcardsAtuais[indiceFlashcardAtual];
-                flashcardQ.innerHTML = cartaAtual.Frente ? cartaAtual.Frente.replace(/\n/g, '<br>') : 'Frente não encontrada no CSV';
-                flashcardA.innerHTML = cartaAtual.Verso ? cartaAtual.Verso.replace(/\n/g, '<br>') : 'Verso não encontrado no CSV';
-                
-                if(contadorFlashcard) {
-                    contadorFlashcard.innerText = `${indiceFlashcardAtual + 1} / ${flashcardsAtuais.length}`;
-                }
+                flashcardQ.innerHTML = cartaAtual.Frente ? cartaAtual.Frente.replace(/\n/g, '<br>') : '';
+                flashcardA.innerHTML = cartaAtual.Verso ? cartaAtual.Verso.replace(/\n/g, '<br>') : '';
+                if(contadorFlashcard) contadorFlashcard.innerText = `${indiceFlashcardAtual + 1} / ${flashcardsAtuais.length}`;
                 flashcard.classList.remove('flipped');
             }
         }
 
         btnFlashcardProximo.addEventListener('click', () => {
-            if (indiceFlashcardAtual < flashcardsAtuais.length - 1) {
-                indiceFlashcardAtual++;
-                renderizarFlashcardNuvem();
-            }
+            if (indiceFlashcardAtual < flashcardsAtuais.length - 1) { indiceFlashcardAtual++; renderizarFlashcardNuvem(); }
         });
-
         btnFlashcardAnterior.addEventListener('click', () => {
-            if (indiceFlashcardAtual > 0) {
-                indiceFlashcardAtual--;
-                renderizarFlashcardNuvem();
+            if (indiceFlashcardAtual > 0) { indiceFlashcardAtual--; renderizarFlashcardNuvem(); }
+        });
+        flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
+
+        // --- LÓGICA DE QUESTÕES (SIMULADO) ---
+        const quizModal = document.getElementById('quiz-modal');
+        const btnOpenQuiz = document.getElementById('open-quiz-btn');
+        const btnCloseQuiz = document.getElementById('close-quiz-btn');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptA = document.getElementById('quiz-opt-a');
+        const quizOptB = document.getElementById('quiz-opt-b');
+        const quizOptC = document.getElementById('quiz-opt-c');
+        const quizOptD = document.getElementById('quiz-opt-d');
+        const quizCounter = document.getElementById('quiz-counter');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const quizFeedbackTitle = document.getElementById('quiz-feedback-title');
+        const quizFeedbackText = document.getElementById('quiz-feedback-text');
+        const btnQuizNext = document.getElementById('btn-quiz-next');
+        const quizBtns = document.querySelectorAll('.quiz-btn');
+
+        let questoesAtuais = [];
+        let indiceQuestaoAtual = 0;
+        let questaoRespondida = false;
+
+        async function carregarQuestoesDaNuvem(nomeDoFicheiro) {
+            try {
+                const resposta = await fetch(nomeDoFicheiro + '?v=' + new Date().getTime());
+                const textoCSV = await resposta.text();
+                Papa.parse(textoCSV, {
+                    header: true, skipEmptyLines: true,
+                    complete: function(resultados) {
+                        questoesAtuais = resultados.data;
+                        indiceQuestaoAtual = 0;
+                    }
+                });
+            } catch (e) { console.error("Erro ao carregar questões."); }
+        }
+
+        function renderizarQuestao() {
+            if(questoesAtuais.length === 0) return;
+            questaoRespondida = false;
+            const q = questoesAtuais[indiceQuestaoAtual];
+            
+            quizQuestion.innerText = q.Pergunta;
+            quizOptA.innerText = q.A;
+            quizOptB.innerText = q.B;
+            quizOptC.innerText = q.C;
+            quizOptD.innerText = q.D;
+            quizCounter.innerText = `${indiceQuestaoAtual + 1}/${questoesAtuais.length}`;
+            
+            quizBtns.forEach(btn => {
+                btn.classList.remove('bg-green-900/50', 'border-green-500', 'bg-red-900/50', 'border-red-500', 'opacity-50');
+                btn.classList.add('bg-gray-900/50', 'border-gray-700');
+            });
+            quizFeedback.classList.add('hidden');
+            
+            btnQuizNext.innerText = (indiceQuestaoAtual === questoesAtuais.length - 1) ? "Finalizar" : "Próxima Questão";
+            btnQuizNext.classList.add('hidden');
+        }
+
+        quizBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(questaoRespondida) return;
+                questaoRespondida = true;
+                const altEscolhida = btn.getAttribute('data-alt');
+                const q = questoesAtuais[indiceQuestaoAtual];
+                const correta = q.Correta.trim().toUpperCase();
+                
+                quizBtns.forEach(b => b.classList.add('opacity-50'));
+                btn.classList.remove('opacity-50');
+                
+                if(altEscolhida === correta) {
+                    btn.classList.replace('bg-gray-900/50', 'bg-green-900/50');
+                    btn.classList.replace('border-gray-700', 'border-green-500');
+                    quizFeedbackTitle.innerText = "ACERTOU! 🎯";
+                    quizFeedbackTitle.className = "font-bold text-sm uppercase mb-1 text-green-400";
+                } else {
+                    btn.classList.replace('bg-gray-900/50', 'bg-red-900/50');
+                    btn.classList.replace('border-gray-700', 'border-red-500');
+                    quizFeedbackTitle.innerText = "ERROU! ❌";
+                    quizFeedbackTitle.className = "font-bold text-sm uppercase mb-1 text-red-400";
+                    const btnCorreto = document.querySelector(`.quiz-btn[data-alt="${correta}"]`);
+                    if(btnCorreto) {
+                        btnCorreto.classList.remove('opacity-50');
+                        btnCorreto.classList.replace('bg-gray-900/50', 'bg-green-900/50');
+                        btnCorreto.classList.replace('border-gray-700', 'border-green-500');
+                    }
+                }
+                quizFeedbackText.innerText = q.Comentario;
+                quizFeedback.classList.remove('hidden');
+                quizFeedback.classList.add('bg-gray-800');
+                btnQuizNext.classList.remove('hidden');
+            });
+        });
+
+        btnQuizNext.addEventListener('click', () => {
+            if(indiceQuestaoAtual < questoesAtuais.length - 1) {
+                indiceQuestaoAtual++;
+                renderizarQuestao();
+            } else {
+                quizModal.classList.add('hidden');
+                chkQuestions.checked = true;
+                checkProgression(); 
             }
         });
 
-        flashcard.addEventListener('click', () => {
-            flashcard.classList.toggle('flipped');
-        });
+        btnOpenQuiz.addEventListener('click', () => { quizModal.classList.remove('hidden'); renderizarQuestao(); });
+        btnCloseQuiz.addEventListener('click', () => quizModal.classList.add('hidden'));
 
         // --- LÓGICA DA TRILHA DIÁRIA ---
         function renderDay(dayNum) {
             const index = (dayNum - 1) % trailData.length; 
             const data = trailData[index];
-
             displayDay.innerText = dayNum;
             textTheory.innerText = data.theory;
             textQuestions.innerText = data.questions;
             
-            // Reseta checkboxes e botão
             chkTheory.checked = false;
             chkQuestions.checked = false;
             chkReview.checked = false;
@@ -396,38 +491,30 @@
         }
 
         function checkProgression() {
-            const allChecked = chkTheory.checked && chkQuestions.checked && chkReview.checked;
-            if (allChecked) {
+            if (chkTheory.checked && chkQuestions.checked && chkReview.checked) {
                 btnAdvance.disabled = false;
-                hintAdvance.innerText = "Excelente! Você está pronto para avançar.";
-                hintAdvance.classList.remove('text-gray-500');
-                hintAdvance.classList.add('text-zeus-gold');
             } else {
                 btnAdvance.disabled = true;
-                hintAdvance.innerText = "Complete todas as missões para liberar o avanço.";
-                hintAdvance.classList.remove('text-zeus-gold');
-                hintAdvance.classList.add('text-gray-500');
             }
         }
 
         chkTheory.addEventListener('change', checkProgression);
         chkQuestions.addEventListener('change', checkProgression);
         chkReview.addEventListener('change', checkProgression);
-
         btnAdvance.addEventListener('click', () => {
             if (btnAdvance.disabled) return;
             currentDayState++;
             renderDay(currentDayState);
         });
 
-        // --- LÓGICA DE LOGIN (TESTE UI) ---
+        // --- INICIALIZAÇÃO ---
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             loginScreen.classList.add('hidden');
             appScreen.classList.remove('hidden');
             renderDay(currentDayState);
-            // Inicia o carregamento dos flashcards apenas após entrar
             carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
+            carregarQuestoesDaNuvem('Lote1_Questoes_Constitucional.csv');
         });
 
         btnLogout.addEventListener('click', () => {
