@@ -1,0 +1,17 @@
+Frente,Verso
+"Ocorre crase entre palavras repetidas (ex: face a face, dia a dia)?",NÃO. É estritamente proibido o uso de crase entre palavras repetidas que formam expressões.
+"Ocorre crase antes de pronomes de tratamento (ex: Vossa Excelência, Você)?","NÃO. Regra geral, não se usa crase antes de pronomes de tratamento (exceções: Senhora, Senhorita e Dona)."
+"Ocorre crase antes de pronomes indefinidos (ex: ninguém, tudo, qualquer)?","NÃO. Pronomes indefinidos não admitem artigo feminino 'a', logo, não há crase."
+A expressão 'a pé' (ex: Fui a pé) leva crase?,"NÃO. 'Pé' é palavra masculina, logo é proibido o uso da crase."
+Quais são os 3 casos principais em que o uso da crase é FACULTATIVO?,"1) Após a preposição 'até'; 2) Antes de pronomes possessivos femininos no singular (minha, sua, nossa); 3) Antes de nomes próprios femininos (Maria, Joana)."
+"Na frase 'Fui até a praia', a crase é obrigatória?",NÃO. A crase é facultativa após a preposição 'até'. (Fui até a praia / Fui até à praia).
+Quando ocorre crase antes da palavra 'CASA' (sentido de próprio lar)?,Só ocorre crase se a palavra 'casa' estiver ESPECIFICADA. (Ex: Fui a casa - sem crase. / Fui à casa DA MINHA AVÓ - com crase).
+Quando ocorre crase antes da palavra 'TERRA'?,Não há crase se 'terra' for oposto de 'bordo' (marinheiros chegaram a terra). Haverá crase se for o planeta ou se estiver ESPECIFICADA (ex: Fui à terra dos meus pais).
+"Locuções adverbiais, prepositivas e conjuntivas femininas levam crase?","SIM, a crase é fixa nessas locuções. Ex: 'às vezes', 'à noite', 'à medida que', 'às pressas'."
+Como calcular uma Permutação Circular (ex: pessoas sentadas numa mesa redonda)?,"Fórmula: P(circular) = (n - 1)!, onde 'n' é o número de elementos."
+Como se resolve um problema de anagramas onde há letras repetidas (ex: BANANA)?,"Permutação com repetição: P = n! / (a! . b! ...), onde 'n' é o total de letras e o denominador são os fatoriais das letras que se repetem (ex: 6! / (3! . 2!))."
+Qual a dica para identificar que um problema é de COMBINAÇÃO (e não Arranjo)?,"Inverta os elementos de um grupo escolhido. Se o resultado for o MESMO grupo (ex: escolher João e Maria ou Maria e João para limpar a sala), a ordem não importa. É Combinação."
+Qual a dica para identificar que um problema é de ARRANJO?,"Inverta os elementos. Se o resultado formar um grupo DIFERENTE (ex: Senha 123 é diferente de 321; ou João como Presidente e Maria Vice é diferente do inverso), a ordem importa. É Arranjo."
+"Em probabilidade, o que indica a conjunção 'OU' (eventos mutuamente exclusivos)?",Indica a SOMA (adição) das probabilidades. (Ex: Qual a probabilidade de tirar um Ás OU um Rei).
+"Em probabilidade, o que indica a conjunção 'E' (eventos sucessivos/independentes)?",Indica a MULTIPLICAÇÃO das probabilidades. (Ex: Qual a probabilidade de tirar cara na 1ª moeda E cara na 2ª moeda).
+O que é a Probabilidade Complementar e como se calcula?,É a probabilidade de um evento NÃO acontecer. P(não ocorrer) = 1 - P(ocorrer). É muito útil em questões que pedem a probabilidade de acontecer 'pelo menos um'.

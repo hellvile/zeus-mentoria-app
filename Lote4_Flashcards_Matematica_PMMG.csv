@@ -1,0 +1,20 @@
+Frente,Verso
+O que é um número primo?,É um número natural maior que 1 que tem apenas dois divisores: o 1 e ele mesmo.
+Qual é a ordem de resolução das operações em uma expressão numérica?,"1º Parênteses, colchetes e chaves; 2º Potenciação e Radiciação; 3º Multiplicação e Divisão; 4º Adição e Subtração."
+"Como transformar uma dízima periódica simples (ex: 0,333...) em fração?","Coloca-se o período no numerador e um número 9 no denominador para cada algarismo do período. Ex: 0,333... = 3/9 = 1/3."
+O que é o MMC (Mínimo Múltiplo Comum) e quando ele costuma ser usado em problemas de concurso?,É o menor múltiplo comum entre números. Usado em problemas que indicam 'encontros periódicos' ou 'eventos que acontecem simultaneamente'.
+O que é o MDC (Máximo Divisor Comum) e quando usá-lo em problemas de concurso?,É o maior número que divide os valores ao mesmo tempo. Usado em problemas de 'dividir em partes iguais com o maior tamanho/quantidade possível'.
+O que são grandezas DIRETAMENTE proporcionais?,"São grandezas que variam na mesma proporção. Se uma aumenta, a outra também aumenta na mesma razão."
+O que são grandezas INVERSAMENTE proporcionais?,"São aquelas que variam em proporção inversa. Se uma aumenta, a outra diminui na mesma proporção (ex: velocidade e tempo)."
+"Na regra de três simples, como montar a equação se as grandezas forem INVERSAMENTE proporcionais?",Deve-se inverter uma das frações (ou multiplicar em linha em vez de cruzar) antes de resolver a proporção.
+Qual é a fórmula de Juros Simples?,J = C . i . t (Juros = Capital x Taxa x Tempo). Atenção: a taxa (i) e o tempo (t) devem estar na mesma unidade de tempo.
+Qual é a fórmula do Montante em Juros Compostos?,M = C . (1 + i)^t
+Como calcular 20% de um valor de forma mental rápida?,"Divide-se o valor por 10 (para achar 10%) e multiplica-se por 2. Ou multiplica-se o valor direto por 0,2."
+Como se converte a unidade de velocidade de km/h para m/s?,"Divide-se o valor por 3,6."
+Como se converte a unidade de velocidade de m/s para km/h?,"Multiplica-se o valor por 3,6."
+Qual a fórmula de Bhaskara para resolver equações do 2º grau (ax² + bx + c = 0)?,"x = (-b ± √Δ) / 2a, onde Δ (delta) = b² - 4ac."
+O que acontece com a equação do 2º grau se o Delta (Δ) for negativo (< 0)?,A equação não possui raízes reais.
+Qual é a fórmula do Termo Geral de uma Progressão Aritmética (P.A.)?,an = a1 + (n - 1) . r (onde 'r' é a razão).
+Qual é a fórmula do Termo Geral de uma Progressão Geométrica (P.G.)?,an = a1 . q^(n-1) (onde 'q' é a razão).
+O que é o Fatorial de um número (n!) na Análise Combinatória?,É a multiplicação desse número por todos os seus antecessores maiores que zero. Ex: 4! = 4 x 3 x 2 x 1 = 24.
+Qual a diferença de uso entre Arranjo e Combinação?,"No Arranjo, a ordem dos elementos importa (ex: filas, senhas). Na Combinação, a ordem não importa (ex: comitês, grupos, times)."

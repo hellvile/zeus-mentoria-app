@@ -1,0 +1,22 @@
+Frente,Verso
+O que é uma Proposição Lógica?,"É uma sentença declarativa, com sentido completo, que pode ser classificada como Verdadeira (V) ou Falsa (F)."
+"Frases interrogativas, exclamativas e imperativas (ordens) podem ser consideradas proposições lógicas?",NÃO. Elas não possuem valor lógico (V ou F).
+O que é uma 'sentença aberta' na lógica?,É uma frase cujo valor lógico não pode ser determinado porque possui uma variável desconhecida. Ex: 'Ele é um bom policial' (Quem é ele?). Não é proposição.
+Qual é o símbolo e a regra da CONJUNÇÃO ('E' / 'AND')?,Símbolo: ^. Regra: Só será Verdadeira (V) quando AMBAS as proposições forem Verdadeiras. (Basta um F para dar F).
+Qual é o símbolo e a regra da DISJUNÇÃO INCLUSIVA ('OU' / 'OR')?,Símbolo: v. Regra: Só será Falsa (F) quando AMBAS as proposições forem Falsas. (Basta um V para dar V).
+Qual é o símbolo e a regra da DISJUNÇÃO EXCLUSIVA ('OU... OU')?,Símbolo: v (com um traço embaixo). Regra: Só é Verdadeira (V) quando as proposições tiverem valores lógicos DIFERENTES (uma V e a outra F).
+Qual é o símbolo e a regra da CONDICIONAL ('Se... então')?,Símbolo: ->. Regra: Só será Falsa (F) se a primeira for Verdadeira e a segunda for Falsa (V -> F = F). É a regra da 'Vera Fischer é Falsa'.
+Qual é o símbolo e a regra da BICONDICIONAL ('Se e somente se')?,Símbolo: <->. Regra: Só será Verdadeira (V) quando as proposições tiverem valores lógicos IGUAIS (V<->V = V / F<->F = V).
+Como se calcula o número de linhas de uma tabela-verdade?,"Pela fórmula 2^n, onde 'n' é o número de proposições simples distintas. Ex: Para 'p', 'q' e 'r' (3 proposições) = 2³ = 8 linhas."
+Como se nega uma CONJUNÇÃO ('p e q')? (1ª Lei de De Morgan),Nega-se tudo e troca-se o 'E' pelo 'OU'. Fica: '~p OU ~q'.
+Como se nega uma DISJUNÇÃO ('p ou q')? (2ª Lei de De Morgan),Nega-se tudo e troca-se o 'OU' pelo 'E'. Fica: '~p E ~q'.
+Como se nega uma CONDICIONAL ('Se p então q')? (Regra do MANÉ),MAntém a primeira 'E' NEga a segunda. O conectivo 'se... então' desaparece e entra o 'E'. Fica: 'p E ~q'.
+Pode-se negar uma Condicional ('Se... então') usando outra Condicional?,NÃO. A negação de uma condicional NUNCA será outra condicional. Será sempre uma Conjunção (E).
+Quais são as duas formas de Equivalência Lógica da CONDICIONAL ('p -> q')?,"1) Contrapositiva: Inverte e nega tudo ('~q -> ~p'). 
+2) Regra do NEYMAR: NEga a 1ª 'OU' MAntém a 2ª ('~p OU q')."
+"Se a proposição é 'Se chove, então levo o guarda-chuva', qual é a sua equivalência pela Contrapositiva?","Se NÃO levo o guarda-chuva, então NÃO chove."
+"Se a proposição é 'Se estudo, então passo', qual é a sua equivalência pela regra do NEYMAR?",NÃO estudo OU passo.
+Como se nega o quantificador universal 'TODO'? (Regra do PEA + NÃO),"Usa-se Pelo menos um, Existe um, ou Algum + NÃO. Ex: 'Todo policial é herói' -> 'Algum policial NÃO é herói'."
+É correto negar 'Todo' usando 'Nenhum' (Ex: 'Nenhum policial é herói')?,NÃO. Não se nega um quantificador universal com outro universal. O extremo não nega o extremo.
+Como se nega o quantificador 'ALGUM' (ou 'Existe' / 'Pelo menos um')?,Usa-se NENHUM (ou 'Todo... não'). Ex: 'Algum candidato passou' -> 'Nenhum candidato passou'.
+Como se nega o quantificador 'NENHUM'?,"Usa-se ALGUM (ou 'Existe', 'Pelo menos um'). Ex: 'Nenhum homem chora' -> 'Algum homem chora'."

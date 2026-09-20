@@ -1,0 +1,17 @@
+Frente,Verso
+Qual é a fórmula da área do triângulo?,A = (base x altura) / 2.
+Qual é a fórmula da área do círculo?,A = π . r² (onde r é o raio).
+Qual é a fórmula do comprimento (perímetro) da circunferência?,C = 2 . π . r.
+Qual é a fórmula da área do trapézio?,A = [(Base maior + base menor) . altura] / 2.
+O que diz o Teorema de Pitágoras?,"Em um triângulo retângulo, o quadrado da hipotenusa é igual à soma dos quadrados dos catetos (a² = b² + c²)."
+Como se calcula o volume de um paralelepípedo retângulo?,V = comprimento x largura x altura.
+Como se calcula o volume de um cilindro?,"V = Área da base x altura (ou seja, V = π . r² . h)."
+Qual é a relação entre o volume do cone e o volume do cilindro de mesma base e altura?,O volume do cone é um terço (1/3) do volume do cilindro (V = (π . r² . h) / 3).
+Como se calcula o volume de uma esfera?,V = (4/3) . π . r³.
+"No triângulo retângulo, o que é o Seno de um ângulo?",Seno = Cateto Oposto / Hipotenusa.
+"No triângulo retângulo, o que é o Cosseno de um ângulo?",Cosseno = Cateto Adjacente / Hipotenusa.
+"No triângulo retângulo, o que é a Tangente de um ângulo?",Tangente = Cateto Oposto / Cateto Adjacente (ou Seno / Cosseno).
+"Quais são os valores de Seno, Cosseno e Tangente de 30°?",Seno = 1/2. Cosseno = (√3)/2. Tangente = (√3)/3.
+"Quais são os valores de Seno, Cosseno e Tangente de 45°?",Seno = (√2)/2. Cosseno = (√2)/2. Tangente = 1.
+"Quais são os valores de Seno, Cosseno e Tangente de 60°?",Seno = (√3)/2. Cosseno = 1/2. Tangente = √3.
+Qual é a Relação Fundamental da Trigonometria?,sen²(x) + cos²(x) = 1.

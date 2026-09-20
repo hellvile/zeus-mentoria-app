@@ -1,0 +1,11 @@
+Frente,Verso
+O que é a Moda num conjunto de dados estatísticos?,É o valor (ou valores) que aparece com maior frequência no conjunto.
+O que é a Mediana e qual é o passo essencial antes de a calcular?,É o valor que divide o conjunto ao meio. O passo essencial é colocar os dados em ordem crescente ou decrescente (formar o rol).
+Como se calcula a Mediana se o conjunto tiver um número PAR de elementos?,Calcula-se a média aritmética dos dois valores centrais do rol.
+Como se calcula a Média Aritmética Simples?,Somando todos os valores do conjunto e dividindo o resultado pelo número total de elementos.
+O que diferencia a Média Ponderada da Média Simples?,"Na Média Ponderada, cada valor é multiplicado pelo seu respetivo 'peso' (ou frequência) antes da soma, e o resultado total é dividido pela soma dos pesos."
+O que indica a Amplitude de um conjunto de dados?,É a diferença entre o maior valor (máximo) e o menor valor (mínimo) da amostra. Mede a dispersão total dos dados.
+O que a Variância e o Desvio Padrão medem numa distribuição?,"Medem a dispersão dos dados em relação à média, ou seja, o quão distantes, em média, os valores estão do centro."
+Qual é a relação matemática entre a Variância e o Desvio Padrão?,O Desvio Padrão é a raiz quadrada exata da Variância.
+"O que significa, na prática, um Desvio Padrão igual a zero?",Significa que não há qualquer dispersão: todos os valores do conjunto de dados são absolutamente iguais à média.
+"Numa distribuição perfeitamente simétrica (curva normal perfeita), qual é a relação entre Média, Mediana e Moda?",Elas possuem exatamente o mesmo valor (Média = Mediana = Moda).
