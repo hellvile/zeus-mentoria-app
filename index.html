@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeus Mentoria APP - Escola de Heróis</title>
-    <!-- Carregando Tailwind CSS -->
+    <!-- Carregando Tailwind CSS e PapaParse (leitor de CSV) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -141,10 +141,10 @@
             
             <form id="login-form" class="space-y-4">
                 <div>
-                    <input type="email" id="email" placeholder="Seu E-mail" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
+                    <input type="text" id="email" placeholder="Qualquer E-mail para Teste" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
                 </div>
                 <div>
-                    <input type="password" id="password" placeholder="Sua Senha" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
+                    <input type="password" id="password" placeholder="Qualquer Senha para Teste" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-zeus-gold focus:ring-1 focus:ring-zeus-gold transition-colors">
                 </div>
                 <button type="submit" class="w-full bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold text-lg py-3 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all transform hover:scale-105 active:scale-95">
                     Entrar no Olimpo
@@ -271,9 +271,9 @@
                         </div>
                         
                         <div class="mt-6 flex justify-center gap-4">
-                            <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Anterior</button>
-                            <span class="px-4 py-2 text-sm font-bold text-zeus-gold">1 / 1</span>
-                            <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Próximo</button>
+                            <button id="btn-flash-prev" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Anterior</button>
+                            <span id="flash-counter" class="px-4 py-2 text-sm font-bold text-zeus-gold">1 / 1</span>
+                            <button id="btn-flash-next" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Próximo</button>
                         </div>
                     </div>
                 </div>
@@ -282,170 +282,105 @@
         </main>
     </div>
 
-    <!-- Importações Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-// Variáveis globais para controlar os flashcards carregados da nuvem
-let flashcardsAtuais = [];
-let indiceFlashcardAtual = 0;
-
-// Elementos de navegação (que não tinham IDs no seu código original)
-const btnFlashcardAnterior = document.querySelector('button:contains("Anterior")') || document.querySelectorAll('.mt-6 button')[0];
-const btnFlashcardProximo = document.querySelector('button:contains("Próximo")') || document.querySelectorAll('.mt-6 button')[1];
-const contadorFlashcard = document.querySelector('.mt-6 span.text-zeus-gold');
-
-// Função para carregar os CSVs da nuvem automaticamente
-async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
-    try {
-        const resposta = await fetch(nomeDoFicheiro);
-        const textoCSV = await resposta.text();
-        
-        Papa.parse(textoCSV, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(resultados) {
-                flashcardsAtuais = resultados.data;
-                indiceFlashcardAtual = 0;
-                console.log("Flashcards carregados com sucesso:", flashcardsAtuais);
-                
-                // Força a renderização do primeiro flashcard do CSV na tela
-                renderizarFlashcardNuvem();
-            }
-        });
-    } catch (erro) {
-        console.error("Erro ao carregar o CSV:", erro);
-    }
-}
-
-// Função que injeta a pergunta e resposta do CSV no HTML
-function renderizarFlashcardNuvem() {
-    if (flashcardsAtuais.length > 0 && flashcardsAtuais[indiceFlashcardAtual]) {
-        const cartaAtual = flashcardsAtuais[indiceFlashcardAtual];
-        
-        // Coloca a Frente e o Verso do CSV nos elementos HTML da tela
-        flashcardQ.innerHTML = cartaAtual.Frente ? cartaAtual.Frente.replace(/\n/g, '<br>') : 'Pergunta não encontrada';
-        flashcardA.innerHTML = cartaAtual.Verso ? cartaAtual.Verso.replace(/\n/g, '<br>') : 'Resposta não encontrada';
-        
-        // Atualiza o contador (ex: 1 / 15)
-        if(contadorFlashcard) {
-            contadorFlashcard.innerText = `${indiceFlashcardAtual + 1} / ${flashcardsAtuais.length}`;
-        }
-
-        // Garante que o cartão volta para a pergunta sempre que mudamos
-        flashcard.classList.remove('flipped');
-    }
-}
-
-// Adicionando evento de clique no botão PRÓXIMO
-if(btnFlashcardProximo) {
-    btnFlashcardProximo.addEventListener('click', () => {
-        if (indiceFlashcardAtual < flashcardsAtuais.length - 1) {
-            indiceFlashcardAtual++;
-            renderizarFlashcardNuvem();
-        }
-    });
-}
-
-// Adicionando evento de clique no botão ANTERIOR
-if(btnFlashcardAnterior) {
-    btnFlashcardAnterior.addEventListener('click', () => {
-        if (indiceFlashcardAtual > 0) {
-            indiceFlashcardAtual--;
-            renderizarFlashcardNuvem();
-        }
-    });
-}
-
-// Inicia o carregamento assim que a página abre
-window.addEventListener('load', () => {
-    carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
-});
-
-        // Configuração do ambiente (usando variáveis injetadas ou fallback)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeus-mentoria-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            // Em ambiente real, o __firebase_config é fornecido. 
-            // Para execução independente, precisaria de uma config real.
-        };
-        
-        let app, db, auth, currentUserId;
-
-        // Tentar inicializar Firebase se a config existir
-        try {
-            if(Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-            } else {
-                console.warn("Firebase config não encontrada. Rodando em modo Local (Apenas Memória/UI).");
-            }
-        } catch (e) {
-            console.error("Erro ao inicializar Firebase:", e);
-        }
-
+    <!-- Script Principal -->
+    <script>
         // --- BANCO DE DADOS DA TRILHA (Cronograma) ---
         const trailData = [
             {
                 day: 1,
                 theory: "Português: Compreensão e interpretação de textos",
                 questions: "Resolver 20 questões de Interpretação Textual no banco.",
-                flashcardQ: "Quais são os fundamentos da República segundo o Art. 1º da CF/88?",
-                flashcardA: "SO-CI-DI-VA-PLU\n(Soberania, Cidadania, Dignidade, Valores sociais, Pluralismo político)"
             },
             {
                 day: 2,
                 theory: "Matemática: Conjuntos numéricos e Operações",
                 questions: "Resolver 20 questões de Conjuntos Numéricos.",
-                flashcardQ: "Quais são os objetivos fundamentais da República (Art. 3º)?",
-                flashcardA: "CON-GA-ER-PRO\n(Construir sociedade livre, Garantir desenvolvimento, Erradicar pobreza, Promover o bem de todos)"
-            },
-            {
-                day: 3,
-                theory: "Direito Constitucional: Princípios Fundamentais (Art 1 ao 4)",
-                questions: "Resolver 20 questões de Princípios Fundamentais.",
-                flashcardQ: "Quais são os princípios nas relações internacionais (Art. 4º)?",
-                flashcardA: "IN-DE-SO-NÃO-I-DE-RE-CO-CO-CO\n(Independência, Defesa da paz, Solução pacífica, Não-intervenção, Igualdade...)"
-            },
-            {
-                day: 4,
-                theory: "Direito Constitucional: Direitos Individuais e Coletivos (Art. 5º)",
-                questions: "Resolver 20 questões do Art. 5º da CF/88.",
-                flashcardQ: "A lei penal retroagirá?",
-                flashcardA: "A lei penal não retroagirá, SALVO para beneficiar o réu. (Art. 5º, XL)"
             }
         ];
 
-        // Variável de estado local
+        // Variáveis de estado local
         let currentDayState = 1;
+        let flashcardsAtuais = [];
+        let indiceFlashcardAtual = 0;
 
-        // Elementos UI
+        // Elementos UI Globais
         const loginScreen = document.getElementById('login-screen');
         const loginForm = document.getElementById('login-form');
-        const loginStatus = document.getElementById('login-status');
         const appScreen = document.getElementById('app-screen');
         const btnLogout = document.getElementById('logout-btn');
-        
         const displayDay = document.getElementById('display-day');
         const textTheory = document.getElementById('text-theory');
         const textQuestions = document.getElementById('text-questions');
-        const flashcardQ = document.getElementById('flashcard-q');
-        const flashcardA = document.getElementById('flashcard-a');
-        const flashcard = document.getElementById('flashcard');
-        const progressBar = document.getElementById('progressBar');
-        
         const chkTheory = document.getElementById('task-theory');
         const chkQuestions = document.getElementById('task-questions');
         const chkReview = document.getElementById('task-review');
         const btnAdvance = document.getElementById('advance-btn');
         const hintAdvance = document.getElementById('advance-hint');
+        
+        // Elementos UI Flashcard
+        const flashcardQ = document.getElementById('flashcard-q');
+        const flashcardA = document.getElementById('flashcard-a');
+        const flashcard = document.getElementById('flashcard');
+        const btnFlashcardAnterior = document.getElementById('btn-flash-prev');
+        const btnFlashcardProximo = document.getElementById('btn-flash-next');
+        const contadorFlashcard = document.getElementById('flash-counter');
 
-        // --- LÓGICA DA INTERFACE ---
+        // --- LÓGICA DOS FLASHCARDS (CSV) ---
+        async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
+            try {
+                // Adicionamos um número aleatório ao final para enganar o cache do navegador
+                const resposta = await fetch(nomeDoFicheiro + '?v=' + new Date().getTime());
+                const textoCSV = await resposta.text();
+                
+                Papa.parse(textoCSV, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(resultados) {
+                        flashcardsAtuais = resultados.data;
+                        indiceFlashcardAtual = 0;
+                        renderizarFlashcardNuvem();
+                    }
+                });
+            } catch (erro) {
+                console.error("Erro ao carregar o CSV:", erro);
+                flashcardQ.innerHTML = "Erro ao carregar flashcards.";
+                flashcardA.innerHTML = "Verifique se o ficheiro CSV está no GitHub.";
+            }
+        }
 
-        // Função para atualizar a tela com os dados do dia atual
+        function renderizarFlashcardNuvem() {
+            if (flashcardsAtuais.length > 0 && flashcardsAtuais[indiceFlashcardAtual]) {
+                const cartaAtual = flashcardsAtuais[indiceFlashcardAtual];
+                flashcardQ.innerHTML = cartaAtual.Frente ? cartaAtual.Frente.replace(/\n/g, '<br>') : 'Frente não encontrada no CSV';
+                flashcardA.innerHTML = cartaAtual.Verso ? cartaAtual.Verso.replace(/\n/g, '<br>') : 'Verso não encontrado no CSV';
+                
+                if(contadorFlashcard) {
+                    contadorFlashcard.innerText = `${indiceFlashcardAtual + 1} / ${flashcardsAtuais.length}`;
+                }
+                flashcard.classList.remove('flipped');
+            }
+        }
+
+        btnFlashcardProximo.addEventListener('click', () => {
+            if (indiceFlashcardAtual < flashcardsAtuais.length - 1) {
+                indiceFlashcardAtual++;
+                renderizarFlashcardNuvem();
+            }
+        });
+
+        btnFlashcardAnterior.addEventListener('click', () => {
+            if (indiceFlashcardAtual > 0) {
+                indiceFlashcardAtual--;
+                renderizarFlashcardNuvem();
+            }
+        });
+
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+
+        // --- LÓGICA DA TRILHA DIÁRIA ---
         function renderDay(dayNum) {
-            // Garante que não passe do limite (ex: reinicia no fim para demonstração)
             const index = (dayNum - 1) % trailData.length; 
             const data = trailData[index];
 
@@ -453,22 +388,13 @@ window.addEventListener('load', () => {
             textTheory.innerText = data.theory;
             textQuestions.innerText = data.questions;
             
-            // Formatando quebra de linha do flashcard de forma segura
-            
-
-            // Reseta checkboxes
+            // Reseta checkboxes e botão
             chkTheory.checked = false;
             chkQuestions.checked = false;
             chkReview.checked = false;
-            
-            // Reseta botão
             checkProgression();
-
-            // Garante que o flashcard volte para a frente
-            flashcard.classList.remove('flipped');
         }
 
-        // Função para verificar se todas as missões foram cumpridas
         function checkProgression() {
             const allChecked = chkTheory.checked && chkQuestions.checked && chkReview.checked;
             if (allChecked) {
@@ -484,122 +410,31 @@ window.addEventListener('load', () => {
             }
         }
 
-        // Eventos dos Checkboxes
         chkTheory.addEventListener('change', checkProgression);
         chkQuestions.addEventListener('change', checkProgression);
         chkReview.addEventListener('change', checkProgression);
 
-        // Evento do Flashcard (Girar)
-        flashcard.addEventListener('click', () => {
-            flashcard.classList.toggle('flipped');
-        });
-
-        // Evento de Avançar Dia
-        btnAdvance.addEventListener('click', async () => {
+        btnAdvance.addEventListener('click', () => {
             if (btnAdvance.disabled) return;
-            
-            // Avança o dia
             currentDayState++;
-            
-            // Atualiza Firestore se estiver autenticado
-            if (auth && currentUserId && db) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'progress', 'tracker');
-                    await setDoc(docRef, { currentDay: currentDayState }, { merge: true });
-                } catch (e) {
-                    console.error("Erro ao salvar progresso:", e);
-                }
-            }
-            
-            // Re-renderiza
             renderDay(currentDayState);
         });
 
-        // --- LÓGICA DE AUTENTICAÇÃO E INICIALIZAÇÃO ---
-
-        async function initUserData(uid) {
-            currentUserId = uid;
-            
-            if (db) {
-                // Tenta buscar o dia salvo no Firestore
-                // REGRA: /artifacts/{appId}/users/{userId}/{collectionName}
-                const docRef = doc(db, 'artifacts', appId, 'users', uid, 'progress', 'tracker');
-                
-                try {
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists() && docSnap.data().currentDay) {
-                        currentDayState = docSnap.data().currentDay;
-                    } else {
-                        // Primeiro login, cria documento
-                        await setDoc(docRef, { currentDay: 1 });
-                        currentDayState = 1;
-                    }
-                } catch (e) {
-                    console.error("Erro ao acessar banco de dados, usando dia 1. Erro:", e);
-                    currentDayState = 1;
-                }
-            }
-
-            // Esconde login e mostra App
+        // --- LÓGICA DE LOGIN (TESTE UI) ---
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             loginScreen.classList.add('hidden');
             appScreen.classList.remove('hidden');
             renderDay(currentDayState);
-        }
-
-        // Listener de Autenticação Real do Firebase (Se configurado)
-        if (auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    initUserData(user.uid);
-                } else {
-                    // Usuário deslogado, mostra tela de login
-                    loginScreen.classList.remove('hidden');
-                    appScreen.classList.add('hidden');
-                    loginStatus.classList.add('hidden');
-                }
-            });
-        }
-
-        // Submissão do Formulário de Login Simulada/Real
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (auth) {
-                loginStatus.classList.remove('hidden');
-                loginStatus.innerText = "Autenticando Herói...";
-                
-                // Segue a regra rigorosa: Tentar Custom Token, senão Anônimo
-                try {
-                    if (typeof __initial_auth_token !== 'undefined') {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    // onAuthStateChanged cuidará do redirecionamento
-                } catch (error) {
-                    console.error("Falha na autenticação:", error);
-                    loginStatus.innerText = "Erro ao conectar. O Olimpo está indisponível.";
-                }
-            } else {
-                // Modo sem Firebase (Apenas UI para demonstração)
-                loginScreen.classList.add('hidden');
-                appScreen.classList.remove('hidden');
-                renderDay(1);
-            }
+            // Inicia o carregamento dos flashcards apenas após entrar
+            carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
         });
 
-        // Logout
-        btnLogout.addEventListener('click', async () => {
-            if (auth) {
-                await signOut(auth);
-            } else {
-                // Modo sem Firebase
-                appScreen.classList.add('hidden');
-                loginScreen.classList.remove('hidden');
-                loginForm.reset();
-            }
+        btnLogout.addEventListener('click', () => {
+            appScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            loginForm.reset();
         });
-
     </script>
 </body>
 </html>
