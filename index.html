@@ -287,6 +287,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// Variáveis globais para controlar os flashcards carregados da nuvem
+let flashcardsAtuais = [];
+let indiceFlashcardAtual = 0;
+
+// Elementos de navegação (que não tinham IDs no seu código original)
+const btnFlashcardAnterior = document.querySelector('button:contains("Anterior")') || document.querySelectorAll('.mt-6 button')[0];
+const btnFlashcardProximo = document.querySelector('button:contains("Próximo")') || document.querySelectorAll('.mt-6 button')[1];
+const contadorFlashcard = document.querySelector('.mt-6 span.text-zeus-gold');
+
 // Função para carregar os CSVs da nuvem automaticamente
 async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
     try {
@@ -297,13 +306,12 @@ async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
             header: true,
             skipEmptyLines: true,
             complete: function(resultados) {
-                const flashcardsCarregados = resultados.data;
-                console.log("Flashcards carregados com sucesso:", flashcardsCarregados);
+                flashcardsAtuais = resultados.data;
+                indiceFlashcardAtual = 0;
+                console.log("Flashcards carregados com sucesso:", flashcardsAtuais);
                 
-                // AQUI CONECTAMOS COM A LÓGICA DO SEU APP
-                // Se a sua variável de flashcards se chamar "flashcards", faríamos:
-                // flashcards = flashcardsCarregados;
-                // renderizarFlashcardAtual(); 
+                // Força a renderização do primeiro flashcard do CSV na tela
+                renderizarFlashcardNuvem();
             }
         });
     } catch (erro) {
@@ -311,10 +319,50 @@ async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
     }
 }
 
+// Função que injeta a pergunta e resposta do CSV no HTML
+function renderizarFlashcardNuvem() {
+    if (flashcardsAtuais.length > 0 && flashcardsAtuais[indiceFlashcardAtual]) {
+        const cartaAtual = flashcardsAtuais[indiceFlashcardAtual];
+        
+        // Coloca a Frente e o Verso do CSV nos elementos HTML da tela
+        flashcardQ.innerHTML = cartaAtual.Frente ? cartaAtual.Frente.replace(/\n/g, '<br>') : 'Pergunta não encontrada';
+        flashcardA.innerHTML = cartaAtual.Verso ? cartaAtual.Verso.replace(/\n/g, '<br>') : 'Resposta não encontrada';
+        
+        // Atualiza o contador (ex: 1 / 15)
+        if(contadorFlashcard) {
+            contadorFlashcard.innerText = `${indiceFlashcardAtual + 1} / ${flashcardsAtuais.length}`;
+        }
+
+        // Garante que o cartão volta para a pergunta sempre que mudamos
+        flashcard.classList.remove('flipped');
+    }
+}
+
+// Adicionando evento de clique no botão PRÓXIMO
+if(btnFlashcardProximo) {
+    btnFlashcardProximo.addEventListener('click', () => {
+        if (indiceFlashcardAtual < flashcardsAtuais.length - 1) {
+            indiceFlashcardAtual++;
+            renderizarFlashcardNuvem();
+        }
+    });
+}
+
+// Adicionando evento de clique no botão ANTERIOR
+if(btnFlashcardAnterior) {
+    btnFlashcardAnterior.addEventListener('click', () => {
+        if (indiceFlashcardAtual > 0) {
+            indiceFlashcardAtual--;
+            renderizarFlashcardNuvem();
+        }
+    });
+}
+
 // Inicia o carregamento assim que a página abre
 window.addEventListener('load', () => {
     carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
 });
+
         // Configuração do ambiente (usando variáveis injetadas ou fallback)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeus-mentoria-app';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -406,8 +454,7 @@ window.addEventListener('load', () => {
             textQuestions.innerText = data.questions;
             
             // Formatando quebra de linha do flashcard de forma segura
-            flashcardQ.innerHTML = data.flashcardQ.replace(/\n/g, '<br>');
-            flashcardA.innerHTML = data.flashcardA.replace(/\n/g, '<br>');
+            
 
             // Reseta checkboxes
             chkTheory.checked = false;
