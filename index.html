@@ -204,7 +204,7 @@
                                 <input type="checkbox" id="task-review" class="zeus-checkbox mt-1">
                                 <div>
                                     <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Revisão (Oráculo)</span>
-                                    <span class="text-white">Girar e revisar os flashcards ao lado.</span>
+                                    <span class="text-white">Girar e revisar os flashcards ao lado (ou rever a teoria caso não haja).</span>
                                 </div>
                             </label>
                         </div>
@@ -246,7 +246,7 @@
                         
                         <div class="mt-6 flex justify-center gap-4">
                             <button id="btn-flash-prev" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Anterior</button>
-                            <span id="flash-counter" class="px-4 py-2 text-sm font-bold text-zeus-gold">1 / 1</span>
+                            <span id="flash-counter" class="px-4 py-2 text-sm font-bold text-zeus-gold">0 / 0</span>
                             <button id="btn-flash-next" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium text-gray-300 transition-colors">Próximo</button>
                         </div>
                     </div>
@@ -270,7 +270,10 @@
             </div>
 
             <div class="overflow-y-auto flex-grow pr-2">
-                <div class="mb-2 text-sm text-zeus-gold font-bold tracking-widest uppercase">Questão <span id="quiz-counter">1/1</span></div>
+                <div class="mb-2 text-sm text-zeus-gold font-bold tracking-widest uppercase flex items-center">
+                    Questão <span id="quiz-counter" class="ml-2">1/1</span> 
+                    <span id="quiz-nivel" class="ml-3 px-2 py-0.5 text-xs rounded border hidden"></span>
+                </div>
                 <p id="quiz-question" class="text-lg text-white mb-6 leading-relaxed">Carregando pergunta...</p>
 
                 <div class="space-y-3" id="quiz-options">
@@ -301,23 +304,63 @@
     </div>
 
     <script>
+        // --- BASE DE DADOS DA TRILHA DIÁRIA ---
+        // É aqui que você define as missões de cada dia e os ficheiros que o sistema deve carregar.
         const trailData = [
             {
                 day: 1,
-                theory: "Constitucional: Princípios Fundamentais (Art 1º ao 4º)",
-                questions: "Resolver questões de Princípios Fundamentais.",
+                theory: "Português: Interpretação e Sintaxe",
+                questionsText: "Resolver 95 questões oficiais da Banca CRS de Português.",
+                csvFlashcards: "Lote5_Flashcards_Portugues_Sintaxe.csv", // Ficheiro que você já tinha
+                csvQuestoes: "Lote_Completo_Portugues_PMMG.csv"
             },
             {
                 day: 2,
-                theory: "Português: Compreensão e interpretação de textos",
-                questions: "Resolver questões de Interpretação Textual no banco.",
+                theory: "Exatas: Raciocínio Lógico e Estatística",
+                questionsText: "Resolver 52 questões avançadas de RLM e Estatística.",
+                csvFlashcards: "", // Deixado vazio de propósito para teste
+                csvQuestoes: "Lote_Completo_Exatas_PMMG.csv"
+            },
+            {
+                day: 3,
+                theory: "Direito Constitucional",
+                questionsText: "Resolver 70 questões de Constitucional.",
+                csvFlashcards: "",
+                csvQuestoes: "Lote_Completo_Constitucional_PMMG.csv"
+            },
+            {
+                day: 4,
+                theory: "Direitos Humanos",
+                questionsText: "Resolver 32 questões de Direitos Humanos.",
+                csvFlashcards: "",
+                csvQuestoes: "Lote_Completo_Direitos_Humanos_PMMG.csv"
+            },
+            {
+                day: 5,
+                theory: "Legislação (LINDB + Extravagante)",
+                questionsText: "Resolver 21 questões de Legislação.",
+                csvFlashcards: "",
+                csvQuestoes: "Lote_Completo_Legislacao_PMMG.csv"
+            },
+            {
+                day: 6,
+                theory: "Inglês e Direito Penal/Militar",
+                questionsText: "Resolver 52 questões mistas (Final).",
+                csvFlashcards: "",
+                csvQuestoes: "Lote_Completo_Final_PMMG.csv"
             }
         ];
 
         let currentDayState = 1;
+        
+        // Variáveis de estado global
         let flashcardsAtuais = [];
         let indiceFlashcardAtual = 0;
+        let questoesAtuais = [];
+        let indiceQuestaoAtual = 0;
+        let questaoRespondida = false;
 
+        // Elementos da Interface
         const loginScreen = document.getElementById('login-screen');
         const loginForm = document.getElementById('login-form');
         const appScreen = document.getElementById('app-screen');
@@ -330,12 +373,30 @@
         const chkReview = document.getElementById('task-review');
         const btnAdvance = document.getElementById('advance-btn');
         
+        // Elementos Flashcards
         const flashcardQ = document.getElementById('flashcard-q');
         const flashcardA = document.getElementById('flashcard-a');
         const flashcard = document.getElementById('flashcard');
         const btnFlashcardAnterior = document.getElementById('btn-flash-prev');
         const btnFlashcardProximo = document.getElementById('btn-flash-next');
         const contadorFlashcard = document.getElementById('flash-counter');
+
+        // Elementos Campo de Tiro
+        const quizModal = document.getElementById('quiz-modal');
+        const btnOpenQuiz = document.getElementById('open-quiz-btn');
+        const btnCloseQuiz = document.getElementById('close-quiz-btn');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptA = document.getElementById('quiz-opt-a');
+        const quizOptB = document.getElementById('quiz-opt-b');
+        const quizOptC = document.getElementById('quiz-opt-c');
+        const quizOptD = document.getElementById('quiz-opt-d');
+        const quizCounter = document.getElementById('quiz-counter');
+        const quizNivel = document.getElementById('quiz-nivel');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const quizFeedbackTitle = document.getElementById('quiz-feedback-title');
+        const quizFeedbackText = document.getElementById('quiz-feedback-text');
+        const btnQuizNext = document.getElementById('btn-quiz-next');
+        const quizBtns = document.querySelectorAll('.quiz-btn');
 
         // --- LÓGICA DOS FLASHCARDS ---
         async function carregarFlashcardsDaNuvem(nomeDoFicheiro) {
@@ -350,7 +411,12 @@
                         renderizarFlashcardNuvem();
                     }
                 });
-            } catch (erro) { console.error("Erro flashcards."); }
+            } catch (erro) { 
+                console.error("Erro flashcards."); 
+                flashcardQ.innerHTML = "Sem flashcards hoje.";
+                flashcardA.innerHTML = "Revise a teoria e o Campo de Tiro.";
+                if(contadorFlashcard) contadorFlashcard.innerText = "0 / 0";
+            }
         }
 
         function renderizarFlashcardNuvem() {
@@ -372,25 +438,6 @@
         flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
 
         // --- LÓGICA DE QUESTÕES (SIMULADO) ---
-        const quizModal = document.getElementById('quiz-modal');
-        const btnOpenQuiz = document.getElementById('open-quiz-btn');
-        const btnCloseQuiz = document.getElementById('close-quiz-btn');
-        const quizQuestion = document.getElementById('quiz-question');
-        const quizOptA = document.getElementById('quiz-opt-a');
-        const quizOptB = document.getElementById('quiz-opt-b');
-        const quizOptC = document.getElementById('quiz-opt-c');
-        const quizOptD = document.getElementById('quiz-opt-d');
-        const quizCounter = document.getElementById('quiz-counter');
-        const quizFeedback = document.getElementById('quiz-feedback');
-        const quizFeedbackTitle = document.getElementById('quiz-feedback-title');
-        const quizFeedbackText = document.getElementById('quiz-feedback-text');
-        const btnQuizNext = document.getElementById('btn-quiz-next');
-        const quizBtns = document.querySelectorAll('.quiz-btn');
-
-        let questoesAtuais = [];
-        let indiceQuestaoAtual = 0;
-        let questaoRespondida = false;
-
         async function carregarQuestoesDaNuvem(nomeDoFicheiro) {
             try {
                 const resposta = await fetch(nomeDoFicheiro + '?v=' + new Date().getTime());
@@ -402,11 +449,16 @@
                         indiceQuestaoAtual = 0;
                     }
                 });
-            } catch (e) { console.error("Erro ao carregar questões."); }
+            } catch (e) { 
+                console.error("Erro ao carregar questões."); 
+            }
         }
 
         function renderizarQuestao() {
-            if(questoesAtuais.length === 0) return;
+            if(questoesAtuais.length === 0) {
+                quizQuestion.innerText = "Nenhuma questão encontrada para hoje.";
+                return;
+            }
             questaoRespondida = false;
             const q = questoesAtuais[indiceQuestaoAtual];
             
@@ -416,6 +468,17 @@
             quizOptC.innerText = q.C;
             quizOptD.innerText = q.D;
             quizCounter.innerText = `${indiceQuestaoAtual + 1}/${questoesAtuais.length}`;
+            
+            // Lógica para mostrar a Dificuldade
+            if (quizNivel && q.Nivel) {
+                quizNivel.classList.remove('hidden', 'bg-green-900/50', 'border-green-500', 'text-green-400', 'bg-yellow-900/50', 'border-yellow-500', 'text-yellow-400', 'bg-red-900/50', 'border-red-500', 'text-red-400');
+                if (q.Nivel === 'Fácil') quizNivel.classList.add('bg-green-900/50', 'border-green-500', 'text-green-400');
+                else if (q.Nivel === 'Médio') quizNivel.classList.add('bg-yellow-900/50', 'border-yellow-500', 'text-yellow-400');
+                else quizNivel.classList.add('bg-red-900/50', 'border-red-500', 'text-red-400');
+                quizNivel.innerText = q.Nivel;
+            } else if (quizNivel) {
+                quizNivel.classList.add('hidden');
+            }
             
             quizBtns.forEach(btn => {
                 btn.classList.remove('bg-green-900/50', 'border-green-500', 'bg-red-900/50', 'border-red-500', 'opacity-50');
@@ -429,11 +492,13 @@
 
         quizBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                if(questaoRespondida) return;
+                if(questaoRespondida || questoesAtuais.length === 0) return;
                 questaoRespondida = true;
                 const altEscolhida = btn.getAttribute('data-alt');
                 const q = questoesAtuais[indiceQuestaoAtual];
-                const correta = q.Correta.trim().toUpperCase();
+                
+                // Tratamento de segurança para dados vazios ou formato incorreto
+                const correta = (q.Correta || "").trim().toUpperCase();
                 
                 quizBtns.forEach(b => b.classList.add('opacity-50'));
                 btn.classList.remove('opacity-50');
@@ -455,7 +520,7 @@
                         btnCorreto.classList.replace('border-gray-700', 'border-green-500');
                     }
                 }
-                quizFeedbackText.innerText = q.Comentario;
+                quizFeedbackText.innerText = q.Comentario || "Sem comentário disponível.";
                 quizFeedback.classList.remove('hidden');
                 quizFeedback.classList.add('bg-gray-800');
                 btnQuizNext.classList.remove('hidden');
@@ -476,13 +541,33 @@
         btnOpenQuiz.addEventListener('click', () => { quizModal.classList.remove('hidden'); renderizarQuestao(); });
         btnCloseQuiz.addEventListener('click', () => quizModal.classList.add('hidden'));
 
-        // --- LÓGICA DA TRILHA DIÁRIA ---
+        // --- LÓGICA DA TRILHA DIÁRIA (O CÉREBRO) ---
         function renderDay(dayNum) {
             const index = (dayNum - 1) % trailData.length; 
             const data = trailData[index];
-            displayDay.innerText = dayNum;
+            
+            displayDay.innerText = dayNum; // Mostra o dia real (mesmo se recomeçar o loop)
             textTheory.innerText = data.theory;
-            textQuestions.innerText = data.questions;
+            textQuestions.innerText = data.questionsText;
+            
+            // Reset de segurança
+            flashcardsAtuais = [];
+            questoesAtuais = [];
+            flashcardQ.innerHTML = "Carregando...";
+            flashcardA.innerHTML = "Carregando...";
+            
+            // Carrega dinamicamente os ficheiros do dia
+            if (data.csvFlashcards && data.csvFlashcards !== "") {
+                carregarFlashcardsDaNuvem(data.csvFlashcards);
+            } else {
+                flashcardQ.innerHTML = "Sem flashcards hoje.";
+                flashcardA.innerHTML = "Foque nas questões!";
+                if(contadorFlashcard) contadorFlashcard.innerText = "0 / 0";
+            }
+            
+            if (data.csvQuestoes && data.csvQuestoes !== "") {
+                carregarQuestoesDaNuvem(data.csvQuestoes);
+            }
             
             chkTheory.checked = false;
             chkQuestions.checked = false;
@@ -501,6 +586,7 @@
         chkTheory.addEventListener('change', checkProgression);
         chkQuestions.addEventListener('change', checkProgression);
         chkReview.addEventListener('change', checkProgression);
+        
         btnAdvance.addEventListener('click', () => {
             if (btnAdvance.disabled) return;
             currentDayState++;
@@ -512,9 +598,9 @@
             e.preventDefault();
             loginScreen.classList.add('hidden');
             appScreen.classList.remove('hidden');
+            
+            // Ao entrar, puxa automaticamente tudo o que estiver configurado para o Dia atual
             renderDay(currentDayState);
-            carregarFlashcardsDaNuvem('Lote5_Flashcards_Portugues_Sintaxe.csv');
-            carregarQuestoesDaNuvem('Lote1_Questoes_Constitucional.csv');
         });
 
         btnLogout.addEventListener('click', () => {
