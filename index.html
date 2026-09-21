@@ -37,6 +37,11 @@
         .teoria-conteudo h3 { color: #D4AF37; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.125rem; }
         .teoria-conteudo p { margin-bottom: 1rem; line-height: 1.6; color: #e5e7eb; }
         .teoria-conteudo strong { color: #ffffff; font-weight: bold; }
+        
+        /* Cores de Feedback para o Quiz */
+        .btn-correct { background-color: rgba(22, 163, 74, 0.2) !important; border-color: #16a34a !important; color: #fff !important; }
+        .btn-wrong { background-color: rgba(220, 38, 38, 0.2) !important; border-color: #dc2626 !important; color: #fff !important; }
+        .btn-disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -148,7 +153,7 @@
                                         <span id="text-questions" class="text-white">Resolver bateria do dia.</span>
                                     </div>
                                 </label>
-                                <button id="open-quiz-btn" class="ml-4 px-4 py-2 bg-gray-800 hover:bg-zeus-gold hover:text-zeus-dark text-zeus-gold text-xs font-bold rounded uppercase transition-colors whitespace-nowrap">Resolver</button>
+                                <button id="open-quiz-btn" class="ml-4 px-4 py-2 bg-gray-800 hover:bg-zeus-gold hover:text-zeus-dark text-zeus-gold text-xs font-bold rounded uppercase transition-colors whitespace-nowrap">Carregando...</button>
                             </div>
 
                             <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
@@ -242,10 +247,10 @@
                 <p id="quiz-question" class="text-lg text-white mb-6 leading-relaxed">Carregando pergunta...</p>
 
                 <div class="space-y-3" id="quiz-options">
-                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group" data-alt="A"><span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">A</span> <span id="quiz-opt-a">...</span></button>
-                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group" data-alt="B"><span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">B</span> <span id="quiz-opt-b">...</span></button>
-                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group" data-alt="C"><span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">C</span> <span id="quiz-opt-c">...</span></button>
-                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group" data-alt="D"><span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">D</span> <span id="quiz-opt-d">...</span></button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 transition-all text-gray-300 flex gap-3 group" data-alt="A"><span class="font-bold text-gray-500 w-6">A</span> <span id="quiz-opt-a">...</span></button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 transition-all text-gray-300 flex gap-3 group" data-alt="B"><span class="font-bold text-gray-500 w-6">B</span> <span id="quiz-opt-b">...</span></button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 transition-all text-gray-300 flex gap-3 group" data-alt="C"><span class="font-bold text-gray-500 w-6">C</span> <span id="quiz-opt-c">...</span></button>
+                    <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 transition-all text-gray-300 flex gap-3 group" data-alt="D"><span class="font-bold text-gray-500 w-6">D</span> <span id="quiz-opt-d">...</span></button>
                 </div>
 
                 <div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden bg-gray-800 border border-gray-700">
@@ -292,11 +297,12 @@
         }
 
         // --- TRILHA ---
+        // Você já NÃO precisa colar o botão HTML aqui. O JavaScript vai gerá-lo automaticamente!
         const trailData = [
             {
                 day: 1,
                 theoryTitle: "Português + Direito Constitucional",
-                theoryContent: "<h3>Aguardando material do professor...</h3>",
+                theoryContent: "<p>Acesse a plataforma para assistir às videoaulas introdutórias de Português e Direito Constitucional preparadas para o Dia 1.</p>",
                 flashcards: ["Lote5_Flashcards_Portugues_Sintaxe.csv", "Flashcards_Constitucional.csv"],
                 questoes: [
                     { file: "Lote_Completo_Portugues_PMMG.csv", start: 0, end: 13 },
@@ -306,7 +312,7 @@
             {
                 day: 2,
                 theoryTitle: "Exatas + Direitos Humanos",
-                theoryContent: "<h3>Aguardando material do professor...</h3>",
+                theoryContent: "<p>Hoje o foco é em Raciocínio Lógico e Direitos Humanos. Assista ao material na plataforma antes de iniciar o Campo de Tiro.</p>",
                 flashcards: [],
                 questoes: [
                     { file: "Lote_Completo_Exatas_PMMG.csv", start: 0, end: 13 },
@@ -361,12 +367,25 @@
         const btnQuizNext = document.getElementById('btn-quiz-next');
         const quizBtns = document.querySelectorAll('.quiz-btn');
 
-        // TEORIA
+        // TEORIA (GERAÇÃO AUTOMÁTICA DO BOTÃO DA PLATAFORMA)
         btnOpenTheory.addEventListener('click', () => {
             const index = (currentDayState - 1) % trailData.length; 
-            theoryContent.innerHTML = trailData[index].theoryContent || "<p>Nenhuma teoria para hoje.</p>";
+            const baseContent = trailData[index].theoryContent || "<p>Nenhuma teoria para hoje.</p>";
+            
+            // O botão é injetado automaticamente em todos os dias!
+            const platformButtonHTML = `
+                <div class="mt-8 pt-6 border-t border-gray-800">
+                    <a href="https://membrospolicia.zeusmentoria.com/entrar/" target="_blank" class="block w-full py-4 bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold text-center rounded-xl transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+                        Assistir Aula na Plataforma Oficial
+                    </a>
+                    <p class="mt-4 text-xs text-center text-gray-500">Após terminar a aula na plataforma, feche a aba e clique no botão verde abaixo para validar a missão.</p>
+                </div>
+            `;
+            
+            theoryContent.innerHTML = baseContent + platformButtonHTML;
             theoryModal.classList.remove('hidden');
         });
+
         btnCloseTheory.addEventListener('click', () => theoryModal.classList.add('hidden'));
         btnTheoryDone.addEventListener('click', () => {
             theoryModal.classList.add('hidden');
@@ -391,7 +410,7 @@
                 if(flashcardsAtuais.length > 0) renderizarFlashcardNuvem();
                 else {
                     flashcardQ.innerHTML = "Sem flashcards hoje.";
-                    flashcardA.innerHTML = "Foque nas questões!";
+                    flashcardA.innerHTML = "Foque nas questões e teoria!";
                     if(contadorFlashcard) contadorFlashcard.innerText = "0 / 0";
                 }
             }, 300);
@@ -410,9 +429,13 @@
         btnFlashcardAnterior.addEventListener('click', () => { if(indiceFlashcardAtual > 0) { indiceFlashcardAtual--; renderizarFlashcardNuvem(); } });
         flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
 
-        // QUESTÕES (LIMPEZA TOTAL E FEEDBACK À PROVA DE BALAS)
+        // QUESTÕES (COM PROTEÇÃO DE CARREGAMENTO)
         async function carregarQuestoesDaNuvem(listaQuestoes) {
+            btnOpenQuiz.innerText = "Carregando...";
+            btnOpenQuiz.disabled = true;
             questoesAtuais = [];
+            let errosNomesFicheiros = [];
+
             for (const item of listaQuestoes) {
                 try {
                     const resposta = await fetch(item.file + '?v=' + new Date().getTime());
@@ -422,14 +445,29 @@
                             header: true, skipEmptyLines: true,
                             complete: function(r) { questoesAtuais = questoesAtuais.concat(r.data.slice(item.start, item.end)); }
                         });
+                    } else {
+                        errosNomesFicheiros.push(item.file);
                     }
-                } catch (e) {}
+                } catch (e) {
+                    errosNomesFicheiros.push(item.file);
+                }
             }
+            
             indiceQuestaoAtual = 0;
+            btnOpenQuiz.innerText = "Resolver";
+            btnOpenQuiz.disabled = false;
+
+            if (errosNomesFicheiros.length > 0) {
+                alert("⚠️ ALERTA DE ARQUIVO FALTANDO:\nO GitHub não encontrou:\n" + errosNomesFicheiros.join("\n") + "\n\nRenomeie os arquivos no GitHub tirando os '(1)'.");
+            }
         }
 
         function renderizarQuestao() {
-            if(questoesAtuais.length === 0) { quizQuestion.innerText = "Nenhuma questão para hoje."; return; }
+            if(questoesAtuais.length === 0) { 
+                quizQuestion.innerText = "Nenhuma questão para hoje. O ficheiro CSV pode não ter sido carregado corretamente."; 
+                quizOptA.innerText = "..."; quizOptB.innerText = "..."; quizOptC.innerText = "..."; quizOptD.innerText = "...";
+                return; 
+            }
             questaoRespondida = false;
             const q = questoesAtuais[indiceQuestaoAtual];
             
@@ -445,7 +483,6 @@
                 quizNivel.innerText = q.Nivel;
             } else if (quizNivel) quizNivel.classList.add('hidden');
             
-            // LIMPEZA CIRÚRGICA DOS BOTÕES
             quizBtns.forEach(btn => {
                 btn.className = "quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group";
             });
@@ -461,10 +498,8 @@
                 const altEscolhida = btn.getAttribute('data-alt');
                 const q = questoesAtuais[indiceQuestaoAtual];
                 
-                // Pega a letra correta do CSV (garante que não tem espaços invisíveis)
                 const correta = (q.Correta || "").trim().toUpperCase();
                 
-                // Desativa os botões e tira o hover
                 quizBtns.forEach(b => {
                     b.classList.remove('hover:border-zeus-gold');
                     b.classList.add('opacity-40', 'cursor-not-allowed');
@@ -481,12 +516,10 @@
                     btn.classList.replace('bg-gray-900/50', 'bg-red-900/50');
                     btn.classList.replace('border-gray-700', 'border-red-500');
                     
-                    // Texto explícito indicando qual era a letra certa
                     quizFeedbackTitle.innerHTML = `ATENÇÃO! ERROU ❌ <br><span class="text-sm text-gray-300 mt-1 block">A alternativa correta era a letra <strong class="text-zeus-gold">${correta}</strong></span>`;
                     quizFeedbackTitle.className = "font-bold text-lg uppercase mb-2 text-red-400";
                     totalErros++;
                     
-                    // Acende o botão que estava certo para o aluno ver o que falhou
                     const btnCorreto = document.querySelector(`.quiz-btn[data-alt="${correta}"]`);
                     if(btnCorreto) {
                         btnCorreto.classList.remove('opacity-40');
@@ -504,7 +537,6 @@
                 quizFeedback.classList.remove('hidden');
                 btnQuizNext.classList.remove('hidden');
                 
-                // Rola a janela um bocadinho para baixo para o aluno ver o botão de avançar no telemóvel
                 btnQuizNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
         });
