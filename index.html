@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <!-- Adicionando Chart.js para o Gráfico de Desempenho -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
@@ -38,11 +37,6 @@
         .teoria-conteudo h3 { color: #D4AF37; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.125rem; }
         .teoria-conteudo p { margin-bottom: 1rem; line-height: 1.6; color: #e5e7eb; }
         .teoria-conteudo strong { color: #ffffff; font-weight: bold; }
-        
-        /* Cores de Feedback para o Quiz */
-        .btn-correct { background-color: rgba(22, 163, 74, 0.2) !important; border-color: #16a34a !important; color: #fff !important; }
-        .btn-wrong { background-color: rgba(220, 38, 38, 0.2) !important; border-color: #dc2626 !important; color: #fff !important; }
-        .btn-disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -97,7 +91,6 @@
             <!-- Gráfico de Desempenho e Missões -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <!-- Coluna Esquerda: Missões e Gráfico -->
                 <div class="lg:col-span-2 flex flex-col gap-6">
                     
                     <!-- Painel de Desempenho -->
@@ -140,7 +133,7 @@
                                 <label class="flex items-start gap-4 cursor-pointer flex-grow">
                                     <input type="checkbox" id="task-theory" class="zeus-checkbox mt-1">
                                     <div>
-                                        <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Teoria (2 Matérias)</span>
+                                        <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Teoria</span>
                                         <span id="text-theory" class="text-white">Carregando...</span>
                                     </div>
                                 </label>
@@ -152,7 +145,7 @@
                                     <input type="checkbox" id="task-questions" class="zeus-checkbox mt-1">
                                     <div>
                                         <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Exercícios (25 Questões)</span>
-                                        <span id="text-questions" class="text-white">Resolver bateria mista do dia.</span>
+                                        <span id="text-questions" class="text-white">Resolver bateria do dia.</span>
                                     </div>
                                 </label>
                                 <button id="open-quiz-btn" class="ml-4 px-4 py-2 bg-gray-800 hover:bg-zeus-gold hover:text-zeus-dark text-zeus-gold text-xs font-bold rounded uppercase transition-colors whitespace-nowrap">Resolver</button>
@@ -161,7 +154,7 @@
                             <label class="flex items-start gap-4 p-4 bg-gray-900 rounded-xl border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors group">
                                 <input type="checkbox" id="task-review" class="zeus-checkbox mt-1">
                                 <div>
-                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Revisão Mista (Oráculo)</span>
+                                    <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-1 group-hover:text-gray-300">Revisão (Oráculo)</span>
                                     <span class="text-white">Girar e revisar os flashcards ao lado.</span>
                                 </div>
                             </label>
@@ -255,21 +248,20 @@
                     <button class="quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group" data-alt="D"><span class="font-bold text-gray-500 group-hover:text-zeus-gold w-6">D</span> <span id="quiz-opt-d">...</span></button>
                 </div>
 
-                <!-- O feedback que o aluno VAI LER antes de avançar -->
-                <div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden bg-gray-800">
+                <div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden bg-gray-800 border border-gray-700">
                     <p class="font-bold text-lg uppercase mb-2" id="quiz-feedback-title">Comentário</p>
                     <p class="text-gray-200 text-sm leading-relaxed border-l-4 border-zeus-gold pl-3" id="quiz-feedback-text">...</p>
                 </div>
             </div>
 
             <div class="mt-6 pt-4 border-t border-gray-800 text-right">
-                <button id="btn-quiz-next" class="hidden px-6 py-3 bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold rounded-lg transition-all animate-pulse">Avançar para a Próxima</button>
+                <button id="btn-quiz-next" class="hidden px-6 py-3 bg-zeus-gold hover:bg-zeus-goldHover text-zeus-dark font-bold rounded-lg transition-all">Avançar para a Próxima</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- GESTÃO DE ESTATÍSTICAS E GRÁFICO ---
+        // --- ESTATÍSTICAS ---
         let totalAcertos = parseInt(localStorage.getItem('zeusAcertos')) || 0;
         let totalErros = parseInt(localStorage.getItem('zeusErros')) || 0;
         let chartDesempenho = null;
@@ -277,13 +269,11 @@
         function atualizarGrafico() {
             document.getElementById('stat-acertos').innerText = totalAcertos;
             document.getElementById('stat-erros').innerText = totalErros;
-            
             const total = totalAcertos + totalErros;
             const perc = total === 0 ? 0 : Math.round((totalAcertos / total) * 100);
             document.getElementById('stat-perc').innerText = perc + "%";
 
             const ctx = document.getElementById('desempenhoChart').getContext('2d');
-            
             if(chartDesempenho) chartDesempenho.destroy();
             
             chartDesempenho = new Chart(ctx, {
@@ -297,16 +287,11 @@
                         hoverOffset: 4
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: total > 0 } } }
             });
         }
 
-        // --- BASE DE DADOS DA TRILHA ---
+        // --- TRILHA ---
         const trailData = [
             {
                 day: 1,
@@ -376,7 +361,7 @@
         const btnQuizNext = document.getElementById('btn-quiz-next');
         const quizBtns = document.querySelectorAll('.quiz-btn');
 
-        // LÓGICA DE TEORIA
+        // TEORIA
         btnOpenTheory.addEventListener('click', () => {
             const index = (currentDayState - 1) % trailData.length; 
             theoryContent.innerHTML = trailData[index].theoryContent || "<p>Nenhuma teoria para hoje.</p>";
@@ -389,7 +374,7 @@
             checkProgression();
         });
 
-        // LÓGICA FLASHCARDS
+        // FLASHCARDS
         async function carregarFlashcardsDaNuvem(listaFicheiros) {
             flashcardsAtuais = [];
             for (const file of listaFicheiros) {
@@ -425,7 +410,7 @@
         btnFlashcardAnterior.addEventListener('click', () => { if(indiceFlashcardAtual > 0) { indiceFlashcardAtual--; renderizarFlashcardNuvem(); } });
         flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
 
-        // LÓGICA QUESTÕES (COM FEEDBACK REAL-TIME E GRÁFICO)
+        // QUESTÕES (LIMPEZA TOTAL E FEEDBACK À PROVA DE BALAS)
         async function carregarQuestoesDaNuvem(listaQuestoes) {
             questoesAtuais = [];
             for (const item of listaQuestoes) {
@@ -460,7 +445,7 @@
                 quizNivel.innerText = q.Nivel;
             } else if (quizNivel) quizNivel.classList.add('hidden');
             
-            // RESETAR BOTÕES
+            // LIMPEZA CIRÚRGICA DOS BOTÕES
             quizBtns.forEach(btn => {
                 btn.className = "quiz-btn w-full text-left p-4 rounded-xl border border-gray-700 bg-gray-900/50 hover:border-zeus-gold transition-all text-gray-300 flex gap-3 group";
             });
@@ -475,41 +460,52 @@
                 
                 const altEscolhida = btn.getAttribute('data-alt');
                 const q = questoesAtuais[indiceQuestaoAtual];
+                
+                // Pega a letra correta do CSV (garante que não tem espaços invisíveis)
                 const correta = (q.Correta || "").trim().toUpperCase();
                 
-                // DESATIVA VISUALMENTE TODOS
-                quizBtns.forEach(b => b.classList.add('btn-disabled'));
-                btn.classList.remove('btn-disabled');
+                // Desativa os botões e tira o hover
+                quizBtns.forEach(b => {
+                    b.classList.remove('hover:border-zeus-gold');
+                    b.classList.add('opacity-40', 'cursor-not-allowed');
+                });
+                btn.classList.remove('opacity-40');
                 
-                // LÓGICA DE ACERTO/ERRO E GRÁFICO
                 if(altEscolhida === correta) {
-                    btn.classList.add('btn-correct');
-                    quizFeedbackTitle.innerText = "EXCELENTE! ACERTOU 🎯";
+                    btn.classList.replace('bg-gray-900/50', 'bg-green-900/50');
+                    btn.classList.replace('border-gray-700', 'border-green-500');
+                    quizFeedbackTitle.innerHTML = "EXCELENTE! ACERTOU 🎯";
                     quizFeedbackTitle.className = "font-bold text-lg uppercase mb-2 text-green-400";
                     totalAcertos++;
                 } else {
-                    btn.classList.add('btn-wrong');
-                    quizFeedbackTitle.innerText = "ATENÇÃO! ERROU ❌";
+                    btn.classList.replace('bg-gray-900/50', 'bg-red-900/50');
+                    btn.classList.replace('border-gray-700', 'border-red-500');
+                    
+                    // Texto explícito indicando qual era a letra certa
+                    quizFeedbackTitle.innerHTML = `ATENÇÃO! ERROU ❌ <br><span class="text-sm text-gray-300 mt-1 block">A alternativa correta era a letra <strong class="text-zeus-gold">${correta}</strong></span>`;
                     quizFeedbackTitle.className = "font-bold text-lg uppercase mb-2 text-red-400";
                     totalErros++;
                     
-                    // Mostra qual era a certa
+                    // Acende o botão que estava certo para o aluno ver o que falhou
                     const btnCorreto = document.querySelector(`.quiz-btn[data-alt="${correta}"]`);
                     if(btnCorreto) {
-                        btnCorreto.classList.remove('btn-disabled');
-                        btnCorreto.classList.add('btn-correct');
+                        btnCorreto.classList.remove('opacity-40');
+                        btnCorreto.classList.replace('bg-gray-900/50', 'bg-green-900/50');
+                        btnCorreto.classList.replace('border-gray-700', 'border-green-500');
+                        btnCorreto.classList.add('border-2');
                     }
                 }
                 
-                // SALVA E ATUALIZA GRÁFICO
                 localStorage.setItem('zeusAcertos', totalAcertos);
                 localStorage.setItem('zeusErros', totalErros);
                 atualizarGrafico();
 
-                // MOSTRA COMENTÁRIO E BOTÃO AVANÇAR
-                quizFeedbackText.innerText = q.Comentario || "Anotação do professor não disponível.";
+                quizFeedbackText.innerText = q.Comentario || "Sem comentário do professor.";
                 quizFeedback.classList.remove('hidden');
                 btnQuizNext.classList.remove('hidden');
+                
+                // Rola a janela um bocadinho para baixo para o aluno ver o botão de avançar no telemóvel
+                btnQuizNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
         });
 
@@ -527,7 +523,7 @@
         btnOpenQuiz.addEventListener('click', () => { quizModal.classList.remove('hidden'); renderizarQuestao(); });
         btnCloseQuiz.addEventListener('click', () => quizModal.classList.add('hidden'));
 
-        // CONTROLE DE DIAS
+        // CONTROLO DE DIAS
         function renderDay(dayNum) {
             const index = (dayNum - 1) % trailData.length; 
             const data = trailData[index];
